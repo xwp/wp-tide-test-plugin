@@ -1,0 +1,13 @@
+{
+	"name": "xwp/wp-wp-tide-test-plugin",
+	"type": "wordpress-plugin",
+	"description": "WordPress plugin scaffold/template",
+	"homepage": "https://github.com/xwp/wp-wp-tide-test-plugin",
+	"license": "GPLv2",
+	"require-dev": {
+		"satooshi/php-coveralls": "dev-master"
+	},
+	"extra": {
+		"installer-name": "wp-tide-test-plugin"
+	}
+}
