@@ -199,7 +199,7 @@ abstract class Plugin_Base {
 	 */
 	public function trigger_warning( $message, $code = \E_USER_WARNING ) {
 		if ( ! $this->is_wpcom_vip_prod() ) {
-			trigger_error( esc_html( get_class( $this ) . ': ' . $message ), $code );
+			trigger_error( esc_html( get_class( $this ) . ': ' . $message ), $code ); // @codingStandardsIgnoreLine
 		}
 	}
 
@@ -212,7 +212,13 @@ abstract class Plugin_Base {
 	 *
 	 * @return mixed
 	 */
-	public function add_filter( $name, $callback, $args = array( 'priority' => 10, 'arg_count' => PHP_INT_MAX ) ) {
+	public function add_filter( $name, $callback, $args = array() ) {
+		if ( empty( $args ) ) {
+		    $args = array(
+			    'priority' => 10,
+			    'arg_count' => PHP_INT_MAX,
+		    );
+		}
 		return $this->_add_hook( 'filter', $name, $callback, $args );
 	}
 
@@ -225,7 +231,13 @@ abstract class Plugin_Base {
 	 *
 	 * @return mixed
 	 */
-	public function add_action( $name, $callback, $args = array( 'priority' => 10, 'arg_count' => PHP_INT_MAX ) ) {
+	public function add_action( $name, $callback, $args = array() ) {
+		if ( empty( $args ) ) {
+			$args = array(
+				'priority' => 10,
+				'arg_count' => PHP_INT_MAX,
+			);
+		}
 		return $this->_add_hook( 'action', $name, $callback, $args );
 	}
 
@@ -260,7 +272,7 @@ abstract class Plugin_Base {
 		if ( isset( $this->_called_doc_hooks[ $class_name ] ) ) {
 			$notice = sprintf( 'The add_doc_hooks method was already called on %s. Note that the Plugin_Base constructor automatically calls this method.', $class_name );
 			if ( ! $this->is_wpcom_vip_prod() ) {
-				trigger_error( esc_html( $notice ), \E_USER_NOTICE );
+				trigger_error( esc_html( $notice ), \E_USER_NOTICE ); // @codingStandardsIgnoreLine
 			}
 			return;
 		}

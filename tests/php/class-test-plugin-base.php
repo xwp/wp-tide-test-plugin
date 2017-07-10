@@ -60,10 +60,14 @@ class Test_Plugin_Base extends \WP_UnitTestCase {
 	 */
 	public function test_trigger_warning() {
 		$obj = $this;
+
+		// @codingStandardsIgnoreStart
 		set_error_handler( function ( $errno, $errstr ) use ( $obj ) {
 			$obj->assertEquals( 'WpTideTestPlugin\Plugin: Param is 0!', $errstr );
 			$obj->assertEquals( \E_USER_WARNING, $errno );
 		} );
+		// @codingStandardsIgnoreEnd
+
 		$this->plugin->trigger_warning( 'Param is 0!', \E_USER_WARNING );
 		restore_error_handler();
 	}
@@ -112,10 +116,14 @@ class Test_Plugin_Base extends \WP_UnitTestCase {
 		$this->assertFalse( $mock->is_wpcom_vip_prod() );
 
 		$obj = $this;
+
+		// @codingStandardsIgnoreStart
 		set_error_handler( function ( $errno, $errstr ) use ( $obj, $mock ) {
 			$obj->assertEquals( sprintf( 'The add_doc_hooks method was already called on %s. Note that the Plugin_Base constructor automatically calls this method.', get_class( $mock ) ), $errstr );
 			$obj->assertEquals( \E_USER_NOTICE, $errno );
 		} );
+		// @codingStandardsIgnoreEnd
+
 		$mock->add_doc_hooks();
 		restore_error_handler();
 

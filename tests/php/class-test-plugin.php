@@ -51,7 +51,9 @@ class Test_Plugin extends \WP_UnitTestCase {
 	 */
 	public function filter_config( $config, $plugin ) {
 		unset( $config, $plugin ); // Test should actually use these.
-		return array( 'foo' => 'bar' );
+		return array(
+			'foo' => 'bar',
+		);
 	}
 
 	/* Put other test functions here... */
