@@ -1,4 +1,5 @@
-/* jshint node:true */
+/*jshint node:true.*/
+
 module.exports = function( grunt ) {
 	'use strict';
 
@@ -76,16 +77,16 @@ module.exports = function( grunt ) {
 			},
 			files: {
 				src:	[
-					'**/*.php', // Include all files
-					'!build/**', // Exclude build/
-					'!node_modules/**', // Exclude node_modules/
-					'!tests/**' // Exclude tests/
+					'**/*.php', // Include all files.
+					'!build/**', // Exclude build/.
+					'!node_modules/**', // Exclude node_modules/.
+					'!tests/**' // Exclude tests/.
 				],
 				expand: true
 			}
 		},
 
-		// Build a deploy-able plugin
+		// Build a deploy-able plugin.
 		copy: {
 			build: {
 				src: [
@@ -112,14 +113,14 @@ module.exports = function( grunt ) {
 			}
 		},
 
-		// Clean up the build
+		// Clean up the build.
 		clean: {
 			build: {
 				src: [ 'build' ]
 			}
 		},
 
-		// VVV (Varying Vagrant Vagrants) Paths
+		// VVV (Varying Vagrant Vagrants) Paths.
 		vvv: {
 			'plugin': '/srv/www/wordpress-develop/src/wp-content/plugins/<%= pkg.name %>',
 			'coverage': '/srv/www/default/coverage/<%= pkg.name %>'
@@ -132,7 +133,7 @@ module.exports = function( grunt ) {
 				stderr: true
 			},
 			readme: {
-				command: 'cd ./dev-lib && ./generate-markdown-readme' // Generate the readme.md
+				command: 'cd ./dev-lib && ./generate-markdown-readme' // Generate the readme.md.
 			},
 			phpunit: {
 				command: 'vagrant ssh -c "cd <%= vvv.plugin %> && phpunit"'
@@ -142,7 +143,7 @@ module.exports = function( grunt ) {
 			}
 		},
 
-		// Deploys a git Repo to the WordPress SVN repo
+		// Deploys a git Repo to the WordPress SVN repo.
 		wp_deploy: {
 			deploy: {
 				options: {
@@ -181,7 +182,7 @@ module.exports = function( grunt ) {
 
 	} );
 
-	// Load tasks
+	// Load tasks.
 	grunt.loadNpmTasks( 'grunt-checktextdomain' );
 	grunt.loadNpmTasks( 'grunt-contrib-clean' );
 	grunt.loadNpmTasks( 'grunt-contrib-copy' );
@@ -192,7 +193,7 @@ module.exports = function( grunt ) {
 	grunt.loadNpmTasks( 'grunt-wp-deploy' );
 	grunt.loadNpmTasks( 'grunt-wp-i18n' );
 
-	// Register tasks
+	// Register tasks.
 	grunt.registerTask( 'default', [
 		'jshint',
 		'uglify',
