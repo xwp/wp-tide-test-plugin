@@ -127,7 +127,7 @@ module.exports = function( grunt ) {
 			'coverage': '/srv/www/default/coverage/<%= pkg.name %>'
 		},
 
-		// Shell actions
+		// Shell actions.
 		shell: {
 			options: {
 				stdout: true,
