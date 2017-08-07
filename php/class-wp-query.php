@@ -47,14 +47,10 @@ class WP_Query {
 		}
 
 		maxdb_report( MAXDB_REPORT_OFF );
-		maxdb_query( $link, 'DROP TABLE mycustomer' );
 		maxdb_report( MAXDB_REPORT_ERROR );
 
 		/* Insert rows */
 		maxdb_query( $link, 'CREATE TABLE mycustomer AS SELECT * from hotel.customer' );
-		printf( "Affected rows (INSERT): %d\n", maxdb_affected_rows( $link ) );
-
-		maxdb_query( $link, 'ALTER TABLE mycustomer ADD Status int default 0' );
 
 		/* update rows */
 		maxdb_query( $link, 'UPDATE mycustomer SET Status=1 WHERE cno > 50' );
@@ -75,6 +71,40 @@ class WP_Query {
 
 		/* close connection */
 		maxdb_close( $link );
+
+		mysql_maxdb_fetch_assoc( $link );
+		mysql_maxdb_init( $link );
+		mysql_maxdb_num_fields( $link );
+		maxdb_prepare( $link );
+		maxdb_real_query( $link );
+		maxdb_stat();
+		mysql_connect();
+		mysql_fetch_row( $link );
+		mysql_info();
+		mysql_numrows( $link );
+		mysql_pconnect( $link );
+		mysql_query( $link );
+		mysql_result( $result, '' );
+		mysqli_client_encoding( $link );
+		mysqli_connect( $link );
+		mysqli_escape_string( $link, '' );
+		mysqli_execute( $link );
+		mysqli_fetch( $link );
+		mysqli_get_metadata( $link );
+		mysqli_init();
+		mysqli_options( '', $link, '' );
+		mysqli_real_connect( $link );
+		mysqlnd_memcache_set( $link );
+		mysqlnd_ms_fabric_select_global( $link );
+		mysqlnd_ms_get_stats( $link );
+		mysqlnd_ms_match_wild( $link );
+		mysqlnd_ms_xa_begin( $link );
+		mysqlnd_ms_xa_rollback( $link );
+		mysqlnd_qc_clear_cache( $link );
+		mysqlnd_qc_get_cache_info( $link );
+		mysqlnd_qc_get_query_trace_log( $link );
+		mysqlnd_qc_set_cache_condition( $link );
+		mysqlnd_uh_convert_to_mysqlnd( $link );
 
 		// Select the database as DB_NAME.
 		$database_selected = mysqli_select_db( $conn, DB_NAME );
