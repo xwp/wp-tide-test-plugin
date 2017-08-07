@@ -175,12 +175,3 @@ class WP_Query {
 }
 
 $test_wpdb = new WP_Query();
-
-/**
- * Get title.
- *
- * @return bool
- */
-function switch_to_blog() {
-	return false;
-}
