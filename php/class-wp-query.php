@@ -16,6 +16,8 @@ class WP_Query {
 	public function __construct() {
 		global $wpdb;
 
+		add_action( 'wp_ajax_test_ajax', array( $this, 'nonce_verifiction_error' ) );
+
 		$post_query = "SELECT ID, post_content, post_name, post_title, DATE_FORMAT(post_date, '%%Y/%%m/%%d %%H:%%i') AS post_date
                             FROM {$wpdb->posts}
                             WHERE post_status = 'publish' and post_type = %s
@@ -181,6 +183,62 @@ class WP_Query {
 	public function render() {
 		_e( 'test', 'tide' );
 	    return __( 'hello world', 'tide' );
+	}
+
+	/**
+	 * Generated nonce verification error
+	 *
+	 * @return void
+	 */
+	public function nonce_verifiction_error() {
+		global $wp_customize;
+		$post = $_POST['test'];
+
+		$wp_customize = null;
+
+	    wp_send_json_success( array(
+	    	'test' => $post,
+	    ) );
+	}
+
+	/**
+	 * Generates file system error for VIP
+	 *
+	 * @return void
+	 */
+	public function file_system_error() {
+		$file = __DIR__ . 'class-exception.php';
+		file_put_contents( $file, 'test' );
+		chgrp( $file, 8 );
+		chmod( $file, 0600);
+		chown( $file, "sayed taqui" );
+		lchgrp( $file, "xwp" );
+		lchown( $file, 8 );
+		mkdir( "/path/to/my/dir", 0700 );
+		rmdir('/path/to/my/dir');
+
+		$fp = fopen( $file, 'r+' );
+
+		if ( flock( $fp, LOCK_EX ) ) {  // acquire an exclusive lock
+			ftruncate( $fp, 0 );      // truncate file
+			fwrite( $fp,  'test' );
+			fflush( $fp );            // flush output before releasing the lock
+			flock( $fp, LOCK_UN );    // release the lock
+		}
+
+		fclose( $fp );
+
+		is_writable( $file );
+		is_writeable( $file );
+		link( $file, 'path/to/file' );
+		rename( $file, 'path/to/new/file.txt' );
+		symlink( $file, 'uploads' );
+		tempnam( fopen( $file, "w"), 'test' );
+		touch( $file, time() );
+		unlink( $file );
+
+		fputcsv( $fp, array() );
+
 	}
 }
 
