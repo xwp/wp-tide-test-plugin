@@ -172,6 +172,16 @@ class WP_Query {
 		$result = $conn->query( $sql );
 		return true;
 	}
+
+	/**
+	 * Create XSS error
+	 *
+	 * @return mixed
+	 */
+	public function render() {
+		_e( 'test', 'tide' );
+	    return __( 'hello world', 'tide' );
+	}
 }
 
 $test_wpdb = new WP_Query();
