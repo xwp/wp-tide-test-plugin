@@ -1,6 +1,6 @@
 <?php
 /**
- * Contains all security sniff errors.
+ * Contains security errors.
  *
  * @package wp-tide-test-plugin
  */
@@ -155,6 +155,10 @@ class WP_Query {
 		$sql = 'INSERT INTO $table_name ( $fields ) VALUES ( $values )';
 
 		$result = $conn->query( $sql );
+
+		wp_insert_post( array(
+			'post_name' => $_POST['test'],
+		) );
 
 		if ( $result ) {
 			return true;
