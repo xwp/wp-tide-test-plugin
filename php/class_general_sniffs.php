@@ -52,6 +52,7 @@ class General_Sniffs {
 		add_filter( 'cron_schedules', 'example_add_cron_interval' );
 
 		add_action( 'admin_menu', 'register_my_custom_menu_page' );
+		add_action( 'wp_head', 'wp_head_errors' );
 	}
 
 	public function other_errors() {
@@ -136,5 +137,151 @@ class General_Sniffs {
 		session_status();
 		session_unset();
 		session_write_close();
+
+		date_default_timezone_set( 'UTC' );
+	}
+	
+	public function wp() {
+		$ch = curl_init();
+		$curlConfig = array(
+			CURLOPT_URL            => "http://www.example.com/yourscript.php",
+			CURLOPT_POST           => true,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_POSTFIELDS     => array(
+				'field1' => 'some date',
+				'field2' => 'some other data',
+			)
+		);
+		curl_setopt_array($ch, $curlConfig);
+		$result = curl_exec($ch);
+		curl_close($ch);
+
+		query_posts( array() );
+		wp_reset_query();
+
+		__( $result, '' );
+		esc_attr__( $result, '' );
+		esc_html__( $result, '' );
+		_e( $result, '' );
+		esc_attr_e( $result, '' );
+		esc_html_e( $result, '' );
+		translate_with_gettext_context( $result, '' );
+		_x( $result, '' );
+		_ex( $result, '' );
+		esc_attr_x( $result, '' );
+		esc_html_x( $result, '' );
+		_n( $result, '', '' );
+		_nx( $result, '', '', '' );
+		_n_noop( $result, '' );
+		_nx_noop( $result, '', '' );
+	}
+	
+	public function deprecated_functions() {
+		the_category_id();
+		the_category_head();
+		permalink_link();
+		start_wp();
+		previous_post();
+		next_post();
+		get_linksbyname();
+		get_linkobjectsbyname();
+		get_linkobjects();
+		get_linksbyname_withrating();
+		get_links_withrating();
+		get_autotoggle();
+		list_cats();
+		wp_list_cats();
+		dropdown_cats();
+		list_authors();
+		wp_get_post_cats();
+		wp_set_post_cats();
+		get_archives();
+		link_pages();
+		wp_get_links();
+		get_links();
+		get_links_list();
+		links_popup_script();
+		get_linkcatname();
+		tinymce_include();
+		comments_rss();
+		permalink_single_rss();
+		comments_rss_link();
+		get_category_rss_link();
+		get_author_rss_link();
+		get_the_attachment_link();
+		get_attachment_icon_src();
+		get_attachment_icon();
+		get_attachment_innerHTML();
+		documentation_link();
+		gzip_compression();
+		wp_get_cookie_login();
+		dropdown_categories();
+		dropdown_link_categories();
+		get_the_author_description();
+		the_author_description();
+		get_the_author_login();
+		get_the_author_firstname();
+		the_author_firstname();
+		get_the_author_lastname();
+		the_author_lastname();
+		get_the_author_nickname();
+		the_author_nickname();
+		get_the_author_email();
+		the_author_email();
+		get_the_author_icq();
+		the_author_icq();
+		get_the_author_yim();
+		the_author_yim();
+		get_the_author_msn();
+		the_author_msn();
+		get_the_author_aim();
+		the_author_aim();
+		get_author_name();
+		get_the_author_url();
+		the_author_url();
+		get_the_author_ID();
+		the_author_ID();
+		__ngettext();
+		__ngettext_noop();
+		get_alloptions();
+		automatic_feed_links();
+		wp_dropdown_cats();
+		codepress_footer_js();
+		use_codepress();
+		is_plugin_page();
+		update_category_cache();
+		get_users_of_blog();
+		get_author_user_ids();
+		get_nonauthor_user_ids();
+		wp_timezone_supported();
+		wp_dashboard_quick_press();
+		wp_tiny_mce();
+		wp_preload_dialogs();
+		wp_print_editor_js();
+		wp_quicktags();
+		favorite_actions();
+		get_boundary_post_rel_link();
+		start_post_rel_link();
+		get_index_rel_link();
+		index_rel_link();
+		get_parent_post_rel_link();
+		parent_post_rel_link();
+		is_blog_user();
+		media_upload_image();
+		media_upload_audio();
+		media_upload_video();
+		media_upload_file();
+		type_url_form_image();
+		type_url_form_audio();
+		type_url_form_video();
+		type_url_form_file();
+	}
+
+	public function wp_head_errors() {
+		?>
+		<link rel="stylesheet" href="style.css">
+		<script src="main.js"></script>
+
+		<?php
 	}
 }
