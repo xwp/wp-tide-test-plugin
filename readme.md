@@ -15,5 +15,5 @@ Plugin for testing wp-tide.
 Only get the sniff list.
 
 ``
-phpcs fileName -s | ack -o '(?<=\()\w+(\.\w+)+(?=\)$)' | sort | uniq -c | sort -nr
+phpcs --standard=WordPress-Core,WordPress-Docs,WordPress-Extra,WordPress-VIP fileName -s | ack -o '(?<=\()\w+(\.\w+)+(?=\)$)' | sort | uniq -c | sort -nr
 ``
