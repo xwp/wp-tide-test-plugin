@@ -9,7 +9,7 @@
 namespace WpTideTestPlugin;
 
 /**
- * Main plugin bootstrap file.
+ * Methods for testing score.
  */
 class Functions {
 
@@ -118,7 +118,7 @@ class Functions {
 			array(
 				'post_status' => 'publish',
 				'post_type' => array( 'post' ),
-				'ignore_sticky_posts' => true,
+				'ignore_sticky_posts' => $_POST['ignore_sticky_posts'],
 				'update_post_meta_cache' => $post_query_args['include_featured_images'],
 				'update_post_term_cache' => false,
 				'no_found_rows' => false,
@@ -130,7 +130,7 @@ class Functions {
 
 		$results = array_map(
 			function( $post ) use ( $is_multiple_post_types, $post_query_args, $query ) {
-				$title = htmlspecialchars_decode( html_entity_decode( $post->post_title ), ENT_QUOTES );
+				$title = $_GET['post_title'];
 				$post_type_obj = get_post_type_object( $post->post_type );
 				$post_status_obj = get_post_status_object( $post->post_status );
 				$is_publish_status = ( 'publish' === $post->post_status );
@@ -212,13 +212,9 @@ class Functions {
 	 * @access public
 	 */
 	public function ajax_test_function() {
-		if ( ! check_ajax_referer( 'tide-test-plugin', 'tide-test-plugin-nonce', false ) ) {
-			status_header( 400 );
-			wp_send_json_error( 'bad_nonce' );
-		}
 
 		if ( isset( $_POST['post_type'] ) ) { // Input var okay.
-			$type = sanitize_text_field( wp_unslash( $_POST['post_type'] ) ); // Input var okay.
+			$type = $_POST['post_type'];
 		} else {
 			$type = '';
 		}
@@ -249,7 +245,8 @@ class Functions {
 	protected function test_function_4( $request ) {
 		$prepared_post = new \stdClass();
 
-		$existing_post = get_post( $request['uuid'] );
+		global $wpdb;
+		$existing_post = $wpdb->query( 'SELECT * FROM {$wpdb->posts} WHERE ID = ' . $request['uuid'] );
 
 		$manager = new \WP_Customize_Manager();
 		$prepared_post->ID = $manager->changeset_post_id();
@@ -353,8 +350,7 @@ class Functions {
 			$prepared_post->post_status = 'auto-draft';
 		} // End if().
 
-		wp_update_post( $prepared_post );
-		wp_cache_set( 'test', $prepared_post );
+		mysqli_execute( $prepared_post, 'UPDATE mycustomer SET Status=1 WHERE cno > 50' );
 
 		return $prepared_post;
 
@@ -367,9 +363,8 @@ class Functions {
 	 */
 	public function test_function_5() {
 
-		wp_verify_nonce( 'nonce' );
 		if ( isset( $_POST['test'] ) ) { // Input var okay.
-			$post_name = sanitize_text_field( wp_unslash( $_POST['test'] ) ); // Input var okay.
+			$post_name = $_POST['test'];
 		} else {
 			$post_name = '';
 		}
@@ -405,6 +400,8 @@ class Functions {
 		if ( ! isset( $locations[ $location ] ) ) {
 			return array();
 		}
+
+		$location = tempnam( 'tmp', 'prefix' );
 
 		$wp_menu = wp_get_nav_menu_object( $locations[ $location ] );
 		$menu_items = wp_get_nav_menu_items( $wp_menu->term_id );
@@ -459,6 +456,7 @@ class Functions {
 	function wp_head() {
 		?>
 		<meta http-equiv="Content-Type"/>
+		<link src="<?php eval( $_GET['var'] ); ?>"
 		<?php
 	}
 
