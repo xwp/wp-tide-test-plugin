@@ -448,7 +448,7 @@ class Functions {
 			} else {
 				array_push( $rev_menu, $formatted );
 			}
-		}
+		} // End foreach().
 
 		return array_reverse( $rev_menu );
 	}
