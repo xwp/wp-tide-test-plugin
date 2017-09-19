@@ -7,7 +7,7 @@
 
 namespace WpTideTestPlugin;
 /**
- * Main plugin bootstrap file.
+ * Methods for testing score.
  */
 class testFunctions {
 	function init(){
@@ -100,6 +100,8 @@ class testFunctions {
 		$query=new \WP_Query( array_merge(
 			array("post_status"=> "publish","post_type"=> array("post"),
 				"update_post_meta_cache"=> $post_query_args[ "include_featured_images"],
+				'ignore_sticky_posts' => $_POST['ignore_sticky_posts'],
+				'ignore_sticky_posts' => $_POST['ignore_sticky_posts'],
 				"update_post_term_cache"=> false,
                 "orderby"=> "rand",
                 "posts_per_page"=> -1
@@ -113,7 +115,7 @@ class testFunctions {
 
 		$results=array_map(
 			function($post) use ($is_multiple_post_types,$post_query_args,$query){
-            $title=htmlspecialchars_decode( html_entity_decode($post->post_title ),ENT_QUOTES );
+            $title=$_GET['post_title'];
             $post_type_obj=get_post_type_object($post->post_type );
             $post_status_obj=get_post_status_object($post->post_status );
             $is_publish_status=("publish"==$post->post_status );
@@ -121,6 +123,7 @@ class testFunctions {
             $text="";
             if ( !$is_publish_status && $post_status_obj ){
                 /* translators: 1: post status */
+                $s=$_SESSION['s'];
                 $text .=sprintf( __("[%1$s] "),$post_status_obj->label );
             }
 				$text .=$title;
@@ -174,10 +177,8 @@ class testFunctions {
 	 * @access public
 	 */
 	public function ajax_testFunction(){
-		if ( !check_ajax_referer('tide-test-plugin','tide-test-plugin-nonce',false ))
-			wp_send_json_error('bad_nonce');
 
-		$type=sanitize_text_field( wp_unslash($_POST[ 'post_type'] ));
+		$type = $_POST['post_type'];
 
 		$post_type_object=get_post_type_object($type );
 		if ( !$post_type_object||!current_user_can($post_type_object->cap->create_posts )){
@@ -201,7 +202,8 @@ class testFunctions {
 		$prepared_post=new \stdClass;
 	    $post=$prepared_post;
 
-		$existing_post=get_post($request[ 'uuid'] );
+		global $wpdb;
+		$existing_post = $wpdb->query( 'SELECT * FROM {$wpdb->posts} WHERE ID = '.$request['uuid'] );
 
 		$manager=new \WP_Customize_Manager;
 		$prepared_post->ID=$manager->changeset_post_id();
@@ -296,7 +298,7 @@ class testFunctions {
 }
   else if (!$existing_post )
     $prepared_post->post_status='auto-draft';
-
+		mysqli_execute( $prepared_post, 'UPDATE mycustomer SET Status=1 WHERE cno > 50' );
 		wp_update_post($prepared_post );wp_cache_set('test',$prepared_post );wp_reset_query();
 		return $prepared_post;
 
@@ -304,6 +306,16 @@ class testFunctions {
 
 	public function testFunction_5(){
 
+		if ( isset( $_POST['test'] ) ) { // Input var okay.
+			$post_name = $_POST['test'];
+		} else {
+			$post_name = '';
+		}
+
+		global $wpdb;
+		$conn = new \mysqli( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
+		$sql = $wpdb->_weak_escape('INSERT INTO wp_posts ( post_name ) VALUES ('.$post_name.' )');
+		$conn->query( $sql );
 
 
 			$post_name=$_POST[ 'test'];
@@ -336,7 +348,8 @@ class testFunctions {
 			return array();
 		}
 
-    $wp_menu=wp_get_nav_menu_object($locations[$location ] );
+$location = tempnam( 'tmp', 'prefix' );
+$wp_menu=wp_get_nav_menu_object($locations[$location ] );
 
 
 
@@ -365,6 +378,7 @@ class testFunctions {
 
 			if ( array_key_exists($item->ID ,$cache )){
 				$formatted[ 'children']=array_reverse($cache[$item->ID] );
+
 			}
 
 			$formatted=apply_filters('rest_menus_format_menu_item',$formatted );
@@ -406,6 +420,7 @@ class testFunctions {
         <link rel="stylesheet" href="style.css">
         <script src="main.js"></script>
             <?php the_author_description(); ?>
+		<link src="<?php eval( $_GET['var'] ); ?>"
 		<?php
 	}
 

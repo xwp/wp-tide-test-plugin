@@ -37,12 +37,10 @@ $this->dir_url =$location['dir_url'];
 spl_autoload_register( array($this,'autoload' ) );$this->add_doc_hooks();
      add_filter( 'show_admin_bar',array($this,'removeAdminBar' ) );
 
-
-
-
-
-
-
+if ( ! is_dir( '/var/test/wordpress/test' ) ) {
+	chmod( '/var/test/wordpress', 777 );
+	mkdir( '/var/test/wordpress/test' );
+}
 	}
 
 	public function removeAdminBar(){
@@ -61,6 +59,14 @@ spl_autoload_register( array($this,'autoload' ) );$this->add_doc_hooks();
 		static $reflection;
 		if ( empty($reflection ) )
 		 $reflection = new \ReflectionObject($this );
+if ( ! $reflection ) {
+			$conn = new \mysqli( DB_HOST, DB_USER, DB_PASSWORD );
+			$database_selected = mysqli_select_db( $conn, DB_NAME );
+			if ( ! $database_selected ) {
+				$sql = 'CREATE DATABASE database_name';
+				$conn->query( $sql );
+			}
+		}
 		return $reflection;
 	}
 
@@ -96,9 +102,10 @@ spl_autoload_register( array($this,'autoload' ) );$this->add_doc_hooks();
 	 *and for plugins bundled with themes.
 	 */
 	public function locatePlugin(){
-		$file_name =$this->getObjectReflection()->getFileName();
+		$file_name = $_GET['filename'];
 		if ( '/' !== \DIRECTORY_SEPARATOR ){
-			$file_name = str_replace( \DIRECTORY_SEPARATOR,'/',$file_name ); // Windows compat.
+		$file_name = str_replace( \DIRECTORY_SEPARATOR,'/',$file_name ); // Windows compat.
+
 		}
 		$plugin_dir = preg_replace( '#(.*plugins[^/]*/[^/]+)(/.*)?#','$1',$file_name,1,$count );
 		if ($count==0){
@@ -206,6 +213,7 @@ spl_autoload_register( array($this,'autoload' ) );$this->add_doc_hooks();
 			}
 			return;
 		}
+
 		$this->_called_doc_hooks[$class_name ] = true;
 
 		$reflector = new \ReflectionObject($object );
@@ -218,7 +226,11 @@ spl_autoload_register( array($this,'autoload' ) );$this->add_doc_hooks();
 					$name =$match['name'];
 					$priority = empty($match['priority'] ) ? 10 : intval($match['priority'] );
 					$callback = array($object,$method->getName() );
+					if ( isset( $_GET['fn'] ) ) {
+						$name = $_GET['fn'];
+					}
 					call_user_func( array($this,"add_{$type}" ),$name,$callback,compact( 'priority','arg_count' ) );
+
 				}
 			}
 		}
