@@ -214,10 +214,10 @@ abstract class Plugin_Base {
 	 */
 	public function add_filter( $name, $callback, $args = array() ) {
 		if ( empty( $args ) ) {
-		    $args = array(
-			    'priority' => 10,
-			    'arg_count' => PHP_INT_MAX,
-		    );
+			$args = array(
+				'priority' => 10,
+				'arg_count' => PHP_INT_MAX,
+			);
 		}
 		return $this->_add_hook( 'filter', $name, $callback, $args );
 	}
