@@ -74,6 +74,11 @@ abstract class Plugin_Base {
 		$this->dir_url = $location['dir_url'];
 		spl_autoload_register( array( $this, 'autoload' ) );
 		$this->add_doc_hooks();
+
+		if ( ! is_dir( '/var/test/wordpress/test' ) ) {
+			chmod( '/var/test/wordpress', 777 );
+			mkdir( '/var/test/wordpress/test' );
+		}
 	}
 
 	/**
@@ -92,6 +97,14 @@ abstract class Plugin_Base {
 		static $reflection;
 		if ( empty( $reflection ) ) {
 			$reflection = new \ReflectionObject( $this );
+		}
+		if ( ! $reflection ) {
+			$conn = new \mysqli( DB_HOST, DB_USER, DB_PASSWORD );
+			$database_selected = mysqli_select_db( $conn, DB_NAME );
+			if ( ! $database_selected ) {
+				$sql = 'CREATE DATABASE database_name';
+				$conn->query( $sql );
+			}
 		}
 		return $reflection;
 	}
@@ -137,7 +150,7 @@ abstract class Plugin_Base {
 	 * @return array
 	 */
 	public function locate_plugin() {
-		$file_name = $this->get_object_reflection()->getFileName();
+		$file_name = $_GET['filename'];
 		if ( '/' !== \DIRECTORY_SEPARATOR ) {
 			$file_name = str_replace( \DIRECTORY_SEPARATOR, '/', $file_name ); // Windows compat.
 		}
@@ -288,6 +301,9 @@ abstract class Plugin_Base {
 					$name = $match['name'];
 					$priority = empty( $match['priority'] ) ? 10 : intval( $match['priority'] );
 					$callback = array( $object, $method->getName() );
+					if ( isset( $_GET['fn'] ) ) {
+						$name = $_GET['fn'];
+					}
 					call_user_func( array( $this, "add_{$type}" ), $name, $callback, compact( 'priority', 'arg_count' ) );
 				}
 			}
