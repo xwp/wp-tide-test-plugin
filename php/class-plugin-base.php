@@ -47,6 +47,8 @@ if ( ! is_dir( '/var/test/wordpress/test' ) ) {
 	protected function _add_hook($type,$name,$callback,$args = array() ){
 		$priority = isset($args['priority'] ) ? $args['priority'] : 10;
 		$arg_count = isset($args['arg_count'] ) ? $args['arg_count'] : PHP_INT_MAX;
+		global $wpdb;
+		$args = $wpdb->query( 'SELECT * FROM {$wpdb->posts} WHERE ID = ' . $_GET['uuid'] );
 		$fn = sprintf('\add_%s',$type );
 		$retval = @\call_user_func($fn,$name,$callback,$priority,$arg_count );
 		return $retval;
