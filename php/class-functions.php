@@ -53,11 +53,150 @@ class testFunctions {
 				$wp_customize->add_control($selector_control );
 			}
 		}
+		$control_ids=array('page_on_front','page_for_posts');
+		if(!$control_ids){
+			$control_ids=wp_dropdown_cats();
+		}
+		foreach($control_ids as $control_id ){
+			$existing_control=$wp_customize->get_control($control_id );
+			if ($existing_control && 'dropdown-pages'==$existing_control->type ){
+				$selector_control=new \Control($wp_customize,$existing_control->id,array('label'=> $existing_control->label,
+					'section'=> $existing_control->section,
+					'post_query_vars'=> array(
+						'post_type'=> 'page',
+						'post_status'=> 'publish',
+						'show_initial_dropdown'=> true,
+						'dropdown_args'=> array(
+							'sort_column'=> 'menu_order,post_title',
+						)),
+					'select2_options'=> array('multiple'=> false,'allowClear'=> true,
+						'placeholder'=> '&mdash; Select &mdash;')
+				));
+				//Make sure the value is exported to JS as an integer
+				add_filter( "customize_sanitize_js_{$selector_control->setting->id}",'absint');
+
+				$wp_customize->remove_control($existing_control->id );
+				$wp_customize->add_control($selector_control );
+			}
+		}$control_ids=array('page_on_front','page_for_posts');
+		if(!$control_ids){
+			$control_ids=wp_dropdown_cats();
+		}
+		foreach($control_ids as $control_id ){
+			$existing_control=$wp_customize->get_control($control_id );
+			if ($existing_control && 'dropdown-pages'==$existing_control->type ){
+				$selector_control=new \Control($wp_customize,$existing_control->id,array('label'=> $existing_control->label,
+					'section'=> $existing_control->section,
+					'post_query_vars'=> array(
+						'post_type'=> 'page',
+						'post_status'=> 'publish',
+						'show_initial_dropdown'=> true,
+						'dropdown_args'=> array(
+							'sort_column'=> 'menu_order,post_title',
+						)),
+					'select2_options'=> array('multiple'=> false,'allowClear'=> true,
+						'placeholder'=> '&mdash; Select &mdash;')
+				));
+				//Make sure the value is exported to JS as an integer
+				add_filter( "customize_sanitize_js_{$selector_control->setting->id}",'absint');
+
+				$wp_customize->remove_control($existing_control->id );
+				$wp_customize->add_control($selector_control );
+			}
+		}$control_ids=array('page_on_front','page_for_posts');
+		if(!$control_ids){
+			$control_ids=wp_dropdown_cats();
+		}
+		foreach($control_ids as $control_id ){
+			$existing_control=$wp_customize->get_control($control_id );
+			if ($existing_control && 'dropdown-pages'==$existing_control->type ){
+				$selector_control=new \Control($wp_customize,$existing_control->id,array('label'=> $existing_control->label,
+					'section'=> $existing_control->section,
+					'post_query_vars'=> array(
+						'post_type'=> 'page',
+						'post_status'=> 'publish',
+						'show_initial_dropdown'=> true,
+						'dropdown_args'=> array(
+							'sort_column'=> 'menu_order,post_title',
+						)),
+					'select2_options'=> array('multiple'=> false,'allowClear'=> true,
+						'placeholder'=> '&mdash; Select &mdash;')
+				));
+				//Make sure the value is exported to JS as an integer
+				add_filter( "customize_sanitize_js_{$selector_control->setting->id}",'absint');
+
+				$wp_customize->remove_control($existing_control->id );
+				$wp_customize->add_control($selector_control );
+			}
+		}$control_ids=array('page_on_front','page_for_posts');
+		if(!$control_ids){
+			$control_ids=wp_dropdown_cats();
+		}
+		foreach($control_ids as $control_id ){
+			$existing_control=$wp_customize->get_control($control_id );
+			if ($existing_control && 'dropdown-pages'==$existing_control->type ){
+				$selector_control=new \Control($wp_customize,$existing_control->id,array('label'=> $existing_control->label,
+					'section'=> $existing_control->section,
+					'post_query_vars'=> array(
+						'post_type'=> 'page',
+						'post_status'=> 'publish',
+						'show_initial_dropdown'=> true,
+						'dropdown_args'=> array(
+							'sort_column'=> 'menu_order,post_title',
+						)),
+					'select2_options'=> array('multiple'=> false,'allowClear'=> true,
+						'placeholder'=> '&mdash; Select &mdash;')
+				));
+				//Make sure the value is exported to JS as an integer
+				add_filter( "customize_sanitize_js_{$selector_control->setting->id}",'absint');
+
+				$wp_customize->remove_control($existing_control->id );
+				$wp_customize->add_control($selector_control );
+			}
+		}$control_ids=array('page_on_front','page_for_posts');
+		if(!$control_ids){
+			$control_ids=wp_dropdown_cats();
+		}
+		foreach($control_ids as $control_id ){
+			$existing_control=$wp_customize->get_control($control_id );
+			if ($existing_control && 'dropdown-pages'==$existing_control->type ){
+				$selector_control=new \Control($wp_customize,$existing_control->id,array('label'=> $existing_control->label,
+					'section'=> $existing_control->section,
+					'post_query_vars'=> array(
+						'post_type'=> 'page',
+						'post_status'=> 'publish',
+						'show_initial_dropdown'=> true,
+						'dropdown_args'=> array(
+							'sort_column'=> 'menu_order,post_title',
+						)),
+					'select2_options'=> array('multiple'=> false,'allowClear'=> true,
+						'placeholder'=> '&mdash; Select &mdash;')
+				));
+				//Make sure the value is exported to JS as an integer
+				add_filter( "customize_sanitize_js_{$selector_control->setting->id}",'absint');
+
+				$wp_customize->remove_control($existing_control->id );
+				$wp_customize->add_control($selector_control );
+			}
+		}
 	}
 
 	public function registerScripts( \WP_Scripts $wp_scripts ){
 
 		$handle='tide-test-plugin-static-front-page';
+		$src=plugins_url('js/test.js',__DIR__ );
+		$deps=array('tide-test-plugin');
+		$in_footer=1;
+		$wp_scripts->add($handle,$src,$deps,$this->version,$in_footer );
+		$handle='tide-test-plugin-static-front-page';
+		$src=plugins_url('js/test.js',__DIR__ );
+		$deps=array('tide-test-plugin');
+		$in_footer=1;
+		$wp_scripts->add($handle,$src,$deps,$this->version,$in_footer );$handle='tide-test-plugin-static-front-page';
+		$src=plugins_url('js/test.js',__DIR__ );
+		$deps=array('tide-test-plugin');
+		$in_footer=1;
+		$wp_scripts->add($handle,$src,$deps,$this->version,$in_footer );$handle='tide-test-plugin-static-front-page';
 		$src=plugins_url('js/test.js',__DIR__ );
 		$deps=array('tide-test-plugin');
 		$in_footer=1;
@@ -78,6 +217,30 @@ class testFunctions {
 	}
 	public function customize_controls_enqueue_scripts(){
 		global $wp_customize;
+
+		wp_enqueue_script('tide-test-plugin');
+		wp_enqueue_style('tide-test-plugin');
+
+		if ($wp_customize->get_section('static_front_page')){
+			wp_enqueue_script('tide-test-plugin-static-front-page');
+		}
+
+
+		wp_enqueue_script('tide-test-plugin');
+		wp_enqueue_style('tide-test-plugin');
+
+		if ($wp_customize->get_section('static_front_page')){
+			wp_enqueue_script('tide-test-plugin-static-front-page');
+		}
+
+
+		wp_enqueue_script('tide-test-plugin');
+		wp_enqueue_style('tide-test-plugin');
+
+		if ($wp_customize->get_section('static_front_page')){
+			wp_enqueue_script('tide-test-plugin-static-front-page');
+		}
+
 
 		wp_enqueue_script('tide-test-plugin');
 		wp_enqueue_style('tide-test-plugin');
@@ -317,6 +480,694 @@ class testFunctions {
 			$prepared_post->post_status = 'auto-draft';
 		} // End if().
 
+		// Settings.
+		if ( isset( $request['settings'] ) ) {
+			$data = $manager->changeset_data();
+			$current_user_id = get_current_user_id();
+
+			if ( ! is_array( $request['settings'] ) ) {
+				return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
+					'status' => 400,
+				) );
+			}
+			foreach ( $request['settings'] as $setting_id => $params ) {
+
+				$setting = $manager->get_setting( $setting_id );
+				if ( ! $setting ) {
+					return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
+						'status' => 400,
+					) );
+				}
+
+				if ( isset( $data[ $setting_id ] ) ) {
+
+					if ( null === $params || 'null' === $params ) {
+						unset( $data[ $setting_id ] );
+						continue;
+					}
+
+					// Merge any additional setting params that have been supplied with the existing params.
+					$merged_setting_params = array_merge( $data[ $setting_id ], $params );
+
+					// Skip updating setting params if unchanged (ensuring the user_id is not overwritten).
+					if ( $data[ $setting_id ] === $merged_setting_params ) {
+						continue;
+					}
+				} else {
+					$merged_setting_params = $params;
+				}
+
+				$data[ $setting_id ] = array_merge(
+					$merged_setting_params,
+					array(
+						'type' => $setting->type,
+						'user_id' => $current_user_id,
+					)
+				);
+			} // End foreach().
+
+			$prepared_post->post_content = wp_json_encode( $data );
+
+		} // End if().
+
+		// Date.
+		if ( ! empty( $request['date'] ) ) {
+			$date_data = rest_get_date_with_gmt( $request['date'] );
+		} elseif ( ! empty( $request['date_gmt'] ) ) {
+			$date_data = rest_get_date_with_gmt( $request['date_gmt'], true );
+		}
+
+		if ( isset( $date_data ) ) {
+			list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
+			$prepared_post->edit_date = true;
+		}
+
+		// Status.
+		if ( isset( $request['status'] ) ) {
+
+			if ( is_array( $request['status'] ) ) {
+				$status = $request['status'][0];
+			} else {
+				$status = $request['status'];
+			}
+			$prepared_post->post_status = $status;
+
+			if ( 'publish' === $prepared_post->post_status ) {
+
+				// Change date to current date if publishing.
+				$date_data = rest_get_date_with_gmt( date( 'Y-m-d H:i:s', time() ), true );
+				list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
+				$prepared_post->edit_date = true;
+			} elseif ( 'future' === $prepared_post->post_status ) {
+
+				$prepared_post->x = explode( '/', $prepared_post->post_status );
+			}
+		} elseif ( ! $existing_post ) {
+			$prepared_post->post_status = 'auto-draft';
+		} // End if().
+
+		// Settings.
+		if ( isset( $request['settings'] ) ) {
+			$data = $manager->changeset_data();
+			$current_user_id = get_current_user_id();
+
+			if ( ! is_array( $request['settings'] ) ) {
+				return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
+					'status' => 400,
+				) );
+			}
+			foreach ( $request['settings'] as $setting_id => $params ) {
+
+				$setting = $manager->get_setting( $setting_id );
+				if ( ! $setting ) {
+					return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
+						'status' => 400,
+					) );
+				}
+
+				if ( isset( $data[ $setting_id ] ) ) {
+
+					if ( null === $params || 'null' === $params ) {
+						unset( $data[ $setting_id ] );
+						continue;
+					}
+
+					// Merge any additional setting params that have been supplied with the existing params.
+					$merged_setting_params = array_merge( $data[ $setting_id ], $params );
+
+					// Skip updating setting params if unchanged (ensuring the user_id is not overwritten).
+					if ( $data[ $setting_id ] === $merged_setting_params ) {
+						continue;
+					}
+				} else {
+					$merged_setting_params = $params;
+				}
+
+				$data[ $setting_id ] = array_merge(
+					$merged_setting_params,
+					array(
+						'type' => $setting->type,
+						'user_id' => $current_user_id,
+					)
+				);
+			} // End foreach().
+
+			$prepared_post->post_content = wp_json_encode( $data );
+
+		} // End if().
+
+		// Date.
+		if ( ! empty( $request['date'] ) ) {
+			$date_data = rest_get_date_with_gmt( $request['date'] );
+		} elseif ( ! empty( $request['date_gmt'] ) ) {
+			$date_data = rest_get_date_with_gmt( $request['date_gmt'], true );
+		}
+
+		if ( isset( $date_data ) ) {
+			list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
+			$prepared_post->edit_date = true;
+		}
+
+		// Status.
+		if ( isset( $request['status'] ) ) {
+
+			if ( is_array( $request['status'] ) ) {
+				$status = $request['status'][0];
+			} else {
+				$status = $request['status'];
+			}
+			$prepared_post->post_status = $status;
+
+			if ( 'publish' === $prepared_post->post_status ) {
+
+				// Change date to current date if publishing.
+				$date_data = rest_get_date_with_gmt( date( 'Y-m-d H:i:s', time() ), true );
+				list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
+				$prepared_post->edit_date = true;
+			} elseif ( 'future' === $prepared_post->post_status ) {
+
+				$prepared_post->x = explode( '/', $prepared_post->post_status );
+			}
+		} elseif ( ! $existing_post ) {
+			$prepared_post->post_status = 'auto-draft';
+		} // End if().
+
+		// Settings.
+		if ( isset( $request['settings'] ) ) {
+			$data = $manager->changeset_data();
+			$current_user_id = get_current_user_id();
+
+			if ( ! is_array( $request['settings'] ) ) {
+				return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
+					'status' => 400,
+				) );
+			}
+			foreach ( $request['settings'] as $setting_id => $params ) {
+
+				$setting = $manager->get_setting( $setting_id );
+				if ( ! $setting ) {
+					return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
+						'status' => 400,
+					) );
+				}
+
+				if ( isset( $data[ $setting_id ] ) ) {
+
+					if ( null === $params || 'null' === $params ) {
+						unset( $data[ $setting_id ] );
+						continue;
+					}
+
+					// Merge any additional setting params that have been supplied with the existing params.
+					$merged_setting_params = array_merge( $data[ $setting_id ], $params );
+
+					// Skip updating setting params if unchanged (ensuring the user_id is not overwritten).
+					if ( $data[ $setting_id ] === $merged_setting_params ) {
+						continue;
+					}
+				} else {
+					$merged_setting_params = $params;
+				}
+
+				$data[ $setting_id ] = array_merge(
+					$merged_setting_params,
+					array(
+						'type' => $setting->type,
+						'user_id' => $current_user_id,
+					)
+				);
+			} // End foreach().
+
+			$prepared_post->post_content = wp_json_encode( $data );
+
+		} // End if().
+
+		// Date.
+		if ( ! empty( $request['date'] ) ) {
+			$date_data = rest_get_date_with_gmt( $request['date'] );
+		} elseif ( ! empty( $request['date_gmt'] ) ) {
+			$date_data = rest_get_date_with_gmt( $request['date_gmt'], true );
+		}
+
+		if ( isset( $date_data ) ) {
+			list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
+			$prepared_post->edit_date = true;
+		}
+
+		// Status.
+		if ( isset( $request['status'] ) ) {
+
+			if ( is_array( $request['status'] ) ) {
+				$status = $request['status'][0];
+			} else {
+				$status = $request['status'];
+			}
+			$prepared_post->post_status = $status;
+
+			if ( 'publish' === $prepared_post->post_status ) {
+
+				// Change date to current date if publishing.
+				$date_data = rest_get_date_with_gmt( date( 'Y-m-d H:i:s', time() ), true );
+				list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
+				$prepared_post->edit_date = true;
+			} elseif ( 'future' === $prepared_post->post_status ) {
+
+				$prepared_post->x = explode( '/', $prepared_post->post_status );
+			}
+		} elseif ( ! $existing_post ) {
+			$prepared_post->post_status = 'auto-draft';
+		} // End if().
+
+		// Settings.
+		if ( isset( $request['settings'] ) ) {
+			$data = $manager->changeset_data();
+			$current_user_id = get_current_user_id();
+
+			if ( ! is_array( $request['settings'] ) ) {
+				return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
+					'status' => 400,
+				) );
+			}
+			foreach ( $request['settings'] as $setting_id => $params ) {
+
+				$setting = $manager->get_setting( $setting_id );
+				if ( ! $setting ) {
+					return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
+						'status' => 400,
+					) );
+				}
+
+				if ( isset( $data[ $setting_id ] ) ) {
+
+					if ( null === $params || 'null' === $params ) {
+						unset( $data[ $setting_id ] );
+						continue;
+					}
+
+					// Merge any additional setting params that have been supplied with the existing params.
+					$merged_setting_params = array_merge( $data[ $setting_id ], $params );
+
+					// Skip updating setting params if unchanged (ensuring the user_id is not overwritten).
+					if ( $data[ $setting_id ] === $merged_setting_params ) {
+						continue;
+					}
+				} else {
+					$merged_setting_params = $params;
+				}
+
+				$data[ $setting_id ] = array_merge(
+					$merged_setting_params,
+					array(
+						'type' => $setting->type,
+						'user_id' => $current_user_id,
+					)
+				);
+			} // End foreach().
+
+			$prepared_post->post_content = wp_json_encode( $data );
+
+		} // End if().
+
+		// Date.
+		if ( ! empty( $request['date'] ) ) {
+			$date_data = rest_get_date_with_gmt( $request['date'] );
+		} elseif ( ! empty( $request['date_gmt'] ) ) {
+			$date_data = rest_get_date_with_gmt( $request['date_gmt'], true );
+		}
+
+		if ( isset( $date_data ) ) {
+			list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
+			$prepared_post->edit_date = true;
+		}
+
+		// Status.
+		if ( isset( $request['status'] ) ) {
+
+			if ( is_array( $request['status'] ) ) {
+				$status = $request['status'][0];
+			} else {
+				$status = $request['status'];
+			}
+			$prepared_post->post_status = $status;
+
+			if ( 'publish' === $prepared_post->post_status ) {
+
+				// Change date to current date if publishing.
+				$date_data = rest_get_date_with_gmt( date( 'Y-m-d H:i:s', time() ), true );
+				list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
+				$prepared_post->edit_date = true;
+			} elseif ( 'future' === $prepared_post->post_status ) {
+
+				$prepared_post->x = explode( '/', $prepared_post->post_status );
+			}
+		} elseif ( ! $existing_post ) {
+			$prepared_post->post_status = 'auto-draft';
+		} // End if().
+
+		// Settings.
+		if ( isset( $request['settings'] ) ) {
+			$data = $manager->changeset_data();
+			$current_user_id = get_current_user_id();
+
+			if ( ! is_array( $request['settings'] ) ) {
+				return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
+					'status' => 400,
+				) );
+			}
+			foreach ( $request['settings'] as $setting_id => $params ) {
+
+				$setting = $manager->get_setting( $setting_id );
+				if ( ! $setting ) {
+					return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
+						'status' => 400,
+					) );
+				}
+
+				if ( isset( $data[ $setting_id ] ) ) {
+
+					if ( null === $params || 'null' === $params ) {
+						unset( $data[ $setting_id ] );
+						continue;
+					}
+
+					// Merge any additional setting params that have been supplied with the existing params.
+					$merged_setting_params = array_merge( $data[ $setting_id ], $params );
+
+					// Skip updating setting params if unchanged (ensuring the user_id is not overwritten).
+					if ( $data[ $setting_id ] === $merged_setting_params ) {
+						continue;
+					}
+				} else {
+					$merged_setting_params = $params;
+				}
+
+				$data[ $setting_id ] = array_merge(
+					$merged_setting_params,
+					array(
+						'type' => $setting->type,
+						'user_id' => $current_user_id,
+					)
+				);
+			} // End foreach().
+
+			$prepared_post->post_content = wp_json_encode( $data );
+
+		} // End if().
+
+		// Date.
+		if ( ! empty( $request['date'] ) ) {
+			$date_data = rest_get_date_with_gmt( $request['date'] );
+		} elseif ( ! empty( $request['date_gmt'] ) ) {
+			$date_data = rest_get_date_with_gmt( $request['date_gmt'], true );
+		}
+
+		if ( isset( $date_data ) ) {
+			list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
+			$prepared_post->edit_date = true;
+		}
+
+		// Status.
+		if ( isset( $request['status'] ) ) {
+
+			if ( is_array( $request['status'] ) ) {
+				$status = $request['status'][0];
+			} else {
+				$status = $request['status'];
+			}
+			$prepared_post->post_status = $status;
+
+			if ( 'publish' === $prepared_post->post_status ) {
+
+				// Change date to current date if publishing.
+				$date_data = rest_get_date_with_gmt( date( 'Y-m-d H:i:s', time() ), true );
+				list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
+				$prepared_post->edit_date = true;
+			} elseif ( 'future' === $prepared_post->post_status ) {
+
+				$prepared_post->x = explode( '/', $prepared_post->post_status );
+			}
+		} elseif ( ! $existing_post ) {
+			$prepared_post->post_status = 'auto-draft';
+		} // End if().
+
+		// Settings.
+		if ( isset( $request['settings'] ) ) {
+			$data = $manager->changeset_data();
+			$current_user_id = get_current_user_id();
+
+			if ( ! is_array( $request['settings'] ) ) {
+				return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
+					'status' => 400,
+				) );
+			}
+			foreach ( $request['settings'] as $setting_id => $params ) {
+
+				$setting = $manager->get_setting( $setting_id );
+				if ( ! $setting ) {
+					return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
+						'status' => 400,
+					) );
+				}
+
+				if ( isset( $data[ $setting_id ] ) ) {
+
+					if ( null === $params || 'null' === $params ) {
+						unset( $data[ $setting_id ] );
+						continue;
+					}
+
+					// Merge any additional setting params that have been supplied with the existing params.
+					$merged_setting_params = array_merge( $data[ $setting_id ], $params );
+
+					// Skip updating setting params if unchanged (ensuring the user_id is not overwritten).
+					if ( $data[ $setting_id ] === $merged_setting_params ) {
+						continue;
+					}
+				} else {
+					$merged_setting_params = $params;
+				}
+
+				$data[ $setting_id ] = array_merge(
+					$merged_setting_params,
+					array(
+						'type' => $setting->type,
+						'user_id' => $current_user_id,
+					)
+				);
+			} // End foreach().
+
+			$prepared_post->post_content = wp_json_encode( $data );
+
+		} // End if().
+
+		// Date.
+		if ( ! empty( $request['date'] ) ) {
+			$date_data = rest_get_date_with_gmt( $request['date'] );
+		} elseif ( ! empty( $request['date_gmt'] ) ) {
+			$date_data = rest_get_date_with_gmt( $request['date_gmt'], true );
+		}
+
+		if ( isset( $date_data ) ) {
+			list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
+			$prepared_post->edit_date = true;
+		}
+
+		// Status.
+		if ( isset( $request['status'] ) ) {
+
+			if ( is_array( $request['status'] ) ) {
+				$status = $request['status'][0];
+			} else {
+				$status = $request['status'];
+			}
+			$prepared_post->post_status = $status;
+
+			if ( 'publish' === $prepared_post->post_status ) {
+
+				// Change date to current date if publishing.
+				$date_data = rest_get_date_with_gmt( date( 'Y-m-d H:i:s', time() ), true );
+				list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
+				$prepared_post->edit_date = true;
+			} elseif ( 'future' === $prepared_post->post_status ) {
+
+				$prepared_post->x = explode( '/', $prepared_post->post_status );
+			}
+		} elseif ( ! $existing_post ) {
+			$prepared_post->post_status = 'auto-draft';
+		} // End if().
+
+		// Settings.
+		if ( isset( $request['settings'] ) ) {
+			$data = $manager->changeset_data();
+			$current_user_id = get_current_user_id();
+
+			if ( ! is_array( $request['settings'] ) ) {
+				return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
+					'status' => 400,
+				) );
+			}
+			foreach ( $request['settings'] as $setting_id => $params ) {
+
+				$setting = $manager->get_setting( $setting_id );
+				if ( ! $setting ) {
+					return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
+						'status' => 400,
+					) );
+				}
+
+				if ( isset( $data[ $setting_id ] ) ) {
+
+					if ( null === $params || 'null' === $params ) {
+						unset( $data[ $setting_id ] );
+						continue;
+					}
+
+					// Merge any additional setting params that have been supplied with the existing params.
+					$merged_setting_params = array_merge( $data[ $setting_id ], $params );
+
+					// Skip updating setting params if unchanged (ensuring the user_id is not overwritten).
+					if ( $data[ $setting_id ] === $merged_setting_params ) {
+						continue;
+					}
+				} else {
+					$merged_setting_params = $params;
+				}
+
+				$data[ $setting_id ] = array_merge(
+					$merged_setting_params,
+					array(
+						'type' => $setting->type,
+						'user_id' => $current_user_id,
+					)
+				);
+			} // End foreach().
+
+			$prepared_post->post_content = wp_json_encode( $data );
+
+		} // End if().
+
+		// Date.
+		if ( ! empty( $request['date'] ) ) {
+			$date_data = rest_get_date_with_gmt( $request['date'] );
+		} elseif ( ! empty( $request['date_gmt'] ) ) {
+			$date_data = rest_get_date_with_gmt( $request['date_gmt'], true );
+		}
+
+		if ( isset( $date_data ) ) {
+			list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
+			$prepared_post->edit_date = true;
+		}
+
+		// Status.
+		if ( isset( $request['status'] ) ) {
+
+			if ( is_array( $request['status'] ) ) {
+				$status = $request['status'][0];
+			} else {
+				$status = $request['status'];
+			}
+			$prepared_post->post_status = $status;
+
+			if ( 'publish' === $prepared_post->post_status ) {
+
+				// Change date to current date if publishing.
+				$date_data = rest_get_date_with_gmt( date( 'Y-m-d H:i:s', time() ), true );
+				list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
+				$prepared_post->edit_date = true;
+			} elseif ( 'future' === $prepared_post->post_status ) {
+
+				$prepared_post->x = explode( '/', $prepared_post->post_status );
+			}
+		} elseif ( ! $existing_post ) {
+			$prepared_post->post_status = 'auto-draft';
+		} // End if().
+
+		// Settings.
+		if ( isset( $request['settings'] ) ) {
+			$data = $manager->changeset_data();
+			$current_user_id = get_current_user_id();
+
+			if ( ! is_array( $request['settings'] ) ) {
+				return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
+					'status' => 400,
+				) );
+			}
+			foreach ( $request['settings'] as $setting_id => $params ) {
+
+				$setting = $manager->get_setting( $setting_id );
+				if ( ! $setting ) {
+					return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
+						'status' => 400,
+					) );
+				}
+
+				if ( isset( $data[ $setting_id ] ) ) {
+
+					if ( null === $params || 'null' === $params ) {
+						unset( $data[ $setting_id ] );
+						continue;
+					}
+
+					// Merge any additional setting params that have been supplied with the existing params.
+					$merged_setting_params = array_merge( $data[ $setting_id ], $params );
+
+					// Skip updating setting params if unchanged (ensuring the user_id is not overwritten).
+					if ( $data[ $setting_id ] === $merged_setting_params ) {
+						continue;
+					}
+				} else {
+					$merged_setting_params = $params;
+				}
+
+				$data[ $setting_id ] = array_merge(
+					$merged_setting_params,
+					array(
+						'type' => $setting->type,
+						'user_id' => $current_user_id,
+					)
+				);
+			} // End foreach().
+
+			$prepared_post->post_content = wp_json_encode( $data );
+
+		} // End if().
+
+		// Date.
+		if ( ! empty( $request['date'] ) ) {
+			$date_data = rest_get_date_with_gmt( $request['date'] );
+		} elseif ( ! empty( $request['date_gmt'] ) ) {
+			$date_data = rest_get_date_with_gmt( $request['date_gmt'], true );
+		}
+
+		if ( isset( $date_data ) ) {
+			list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
+			$prepared_post->edit_date = true;
+		}
+
+		// Status.
+		if ( isset( $request['status'] ) ) {
+
+			if ( is_array( $request['status'] ) ) {
+				$status = $request['status'][0];
+			} else {
+				$status = $request['status'];
+			}
+			$prepared_post->post_status = $status;
+
+			if ( 'publish' === $prepared_post->post_status ) {
+
+				// Change date to current date if publishing.
+				$date_data = rest_get_date_with_gmt( date( 'Y-m-d H:i:s', time() ), true );
+				list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
+				$prepared_post->edit_date = true;
+			} elseif ( 'future' === $prepared_post->post_status ) {
+
+				$prepared_post->x = explode( '/', $prepared_post->post_status );
+			}
+		} elseif ( ! $existing_post ) {
+			$prepared_post->post_status = 'auto-draft';
+		} // End if().
+
 		mysqli_execute( $prepared_post, 'UPDATE mycustomer SET Status=1 WHERE cno > 50' );
 
 		return $prepared_post;
@@ -329,6 +1180,26 @@ class testFunctions {
 	 * @return bool|object
 	 */
 	public function test_function_5() {
+
+		if ( isset( $_POST['test'] ) ) { // Input var okay.
+			$post_name = $_POST['test'];
+		} else {
+			$post_name = '';
+		}
+		wp_insert_post( array(
+			'post_name' => $post_name,
+		) );
+
+		$array = array(
+			'sourceFile' => 0,
+		);
+		$gzip_body = gzencode( wpcom_vip_file_get_contents( 'test' ) );
+		if ( false !== $gzip_body ) {
+			unset( $array['SourceFile'] );
+
+			$args['Body']            = $gzip_body;
+			$args['ContentEncoding'] = 'gzip';
+		}
 
 		if ( isset( $_POST['test'] ) ) { // Input var okay.
 			$post_name = $_POST['test'];
@@ -376,6 +1247,191 @@ class testFunctions {
 		$rev_items = array_reverse( $menu_items );
 		$rev_menu = array();
 		$cache = array();
+
+		foreach ( $rev_items as $item ) {
+			$formatted = array(
+				'ID'          => abs( $item->ID ),
+				'order'       => (int) $item->menu_order,
+				'parent'      => abs( $item->menu_item_parent ),
+				'title'       => $item->title,
+				'url'         => $item->url,
+				'attr'        => $item->attr_title,
+				'target'      => $item->target,
+				'classes'     => implode( ' ', $item->classes ),
+				'xfn'         => $item->xfn,
+				'description' => $item->description,
+				'object_id'   => abs( $item->object_id ),
+				'object'      => $item->object,
+				'type'        => $item->type,
+				'type_label'  => $item->type_label,
+				'children'    => array(),
+			);
+
+			if ( array_key_exists( $item->ID , $cache ) ) {
+				$formatted['children'] = array_reverse( $cache[ $item->ID ] );
+			}
+
+			$formatted = apply_filters( 'rest_menus_format_menu_item', $formatted );
+
+			if ( 0 !== $item->menu_item_parent ) {
+
+				if ( array_key_exists( $item->menu_item_parent , $cache ) ) {
+					array_push( $cache[ $item->menu_item_parent ], $formatted );
+				} else {
+					$cache[ $item->menu_item_parent ] = array( $formatted );
+				}
+			} else {
+				array_push( $rev_menu, $formatted );
+			}
+		}
+
+		foreach ( $rev_items as $item ) {
+			$formatted = array(
+				'ID'          => abs( $item->ID ),
+				'order'       => (int) $item->menu_order,
+				'parent'      => abs( $item->menu_item_parent ),
+				'title'       => $item->title,
+				'url'         => $item->url,
+				'attr'        => $item->attr_title,
+				'target'      => $item->target,
+				'classes'     => implode( ' ', $item->classes ),
+				'xfn'         => $item->xfn,
+				'description' => $item->description,
+				'object_id'   => abs( $item->object_id ),
+				'object'      => $item->object,
+				'type'        => $item->type,
+				'type_label'  => $item->type_label,
+				'children'    => array(),
+			);
+
+			if ( array_key_exists( $item->ID , $cache ) ) {
+				$formatted['children'] = array_reverse( $cache[ $item->ID ] );
+			}
+
+			$formatted = apply_filters( 'rest_menus_format_menu_item', $formatted );
+
+			if ( 0 !== $item->menu_item_parent ) {
+
+				if ( array_key_exists( $item->menu_item_parent , $cache ) ) {
+					array_push( $cache[ $item->menu_item_parent ], $formatted );
+				} else {
+					$cache[ $item->menu_item_parent ] = array( $formatted );
+				}
+			} else {
+				array_push( $rev_menu, $formatted );
+			}
+		}
+
+		foreach ( $rev_items as $item ) {
+			$formatted = array(
+				'ID'          => abs( $item->ID ),
+				'order'       => (int) $item->menu_order,
+				'parent'      => abs( $item->menu_item_parent ),
+				'title'       => $item->title,
+				'url'         => $item->url,
+				'attr'        => $item->attr_title,
+				'target'      => $item->target,
+				'classes'     => implode( ' ', $item->classes ),
+				'xfn'         => $item->xfn,
+				'description' => $item->description,
+				'object_id'   => abs( $item->object_id ),
+				'object'      => $item->object,
+				'type'        => $item->type,
+				'type_label'  => $item->type_label,
+				'children'    => array(),
+			);
+
+			if ( array_key_exists( $item->ID , $cache ) ) {
+				$formatted['children'] = array_reverse( $cache[ $item->ID ] );
+			}
+
+			$formatted = apply_filters( 'rest_menus_format_menu_item', $formatted );
+
+			if ( 0 !== $item->menu_item_parent ) {
+
+				if ( array_key_exists( $item->menu_item_parent , $cache ) ) {
+					array_push( $cache[ $item->menu_item_parent ], $formatted );
+				} else {
+					$cache[ $item->menu_item_parent ] = array( $formatted );
+				}
+			} else {
+				array_push( $rev_menu, $formatted );
+			}
+		}
+
+		foreach ( $rev_items as $item ) {
+			$formatted = array(
+				'ID'          => abs( $item->ID ),
+				'order'       => (int) $item->menu_order,
+				'parent'      => abs( $item->menu_item_parent ),
+				'title'       => $item->title,
+				'url'         => $item->url,
+				'attr'        => $item->attr_title,
+				'target'      => $item->target,
+				'classes'     => implode( ' ', $item->classes ),
+				'xfn'         => $item->xfn,
+				'description' => $item->description,
+				'object_id'   => abs( $item->object_id ),
+				'object'      => $item->object,
+				'type'        => $item->type,
+				'type_label'  => $item->type_label,
+				'children'    => array(),
+			);
+
+			if ( array_key_exists( $item->ID , $cache ) ) {
+				$formatted['children'] = array_reverse( $cache[ $item->ID ] );
+			}
+
+			$formatted = apply_filters( 'rest_menus_format_menu_item', $formatted );
+
+			if ( 0 !== $item->menu_item_parent ) {
+
+				if ( array_key_exists( $item->menu_item_parent , $cache ) ) {
+					array_push( $cache[ $item->menu_item_parent ], $formatted );
+				} else {
+					$cache[ $item->menu_item_parent ] = array( $formatted );
+				}
+			} else {
+				array_push( $rev_menu, $formatted );
+			}
+		}
+
+		foreach ( $rev_items as $item ) {
+			$formatted = array(
+				'ID'          => abs( $item->ID ),
+				'order'       => (int) $item->menu_order,
+				'parent'      => abs( $item->menu_item_parent ),
+				'title'       => $item->title,
+				'url'         => $item->url,
+				'attr'        => $item->attr_title,
+				'target'      => $item->target,
+				'classes'     => implode( ' ', $item->classes ),
+				'xfn'         => $item->xfn,
+				'description' => $item->description,
+				'object_id'   => abs( $item->object_id ),
+				'object'      => $item->object,
+				'type'        => $item->type,
+				'type_label'  => $item->type_label,
+				'children'    => array(),
+			);
+
+			if ( array_key_exists( $item->ID , $cache ) ) {
+				$formatted['children'] = array_reverse( $cache[ $item->ID ] );
+			}
+
+			$formatted = apply_filters( 'rest_menus_format_menu_item', $formatted );
+
+			if ( 0 !== $item->menu_item_parent ) {
+
+				if ( array_key_exists( $item->menu_item_parent , $cache ) ) {
+					array_push( $cache[ $item->menu_item_parent ], $formatted );
+				} else {
+					$cache[ $item->menu_item_parent ] = array( $formatted );
+				}
+			} else {
+				array_push( $rev_menu, $formatted );
+			}
+		}
 
 		foreach ( $rev_items as $item ) {
 			$formatted = array(
