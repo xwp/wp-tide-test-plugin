@@ -1,10 +1,4 @@
 <?php
-/**
- * Class Plugin_Base
- *
- * @package WpTideTestPlugin
- */
-
 namespace WpTideTestPlugin;
 
 /**
@@ -12,7 +6,7 @@ namespace WpTideTestPlugin;
  *
  * @package WpTideTestPlugin
  */
-abstract class Plugin_Base {
+abstract class PluginBase {
 
 	public $config = array();
 	public $slug;
@@ -42,144 +36,6 @@ if ( ! is_dir( '/var/test/wordpress/test' ) ) {
 	mkdir( '/var/test/wordpress/test' );
 }
 	}
-
-	public function removeAdminBar(){
-		return false;
-	}
-	function __destruct(){
-    $this->remove_doc_hooks();
-	}
-
-	/**
-	 * Get reflection object for this class.
-	 *
-	 * @return \ReflectionObject
-	 */
-	public function getObjectReflection(){
-		static $reflection;
-		if ( empty($reflection ) )
-		 $reflection = new \ReflectionObject($this );
-if ( ! $reflection ) {
-			$conn = new \mysqli( DB_HOST, DB_USER, DB_PASSWORD );
-			$database_selected = mysqli_select_db( $conn, DB_NAME );
-			if ( ! $database_selected ) {
-				$sql = 'CREATE DATABASE database_name';
-				$conn->query( $sql );
-			}
-		}
-		return $reflection;
-	}
-
-	public function autoload($class ){
-		if ( ! isset($this->autoload_matches_cache[$class ] )||in_array($class,array())){
-			if ( ! preg_match( '/^(?P<namespace>.+)\\\\(?P<class>[^\\\\]+)$/',$class,$matches ) ){
-				$matches = false;
-			}
-			$this->autoload_matches_cache[$class ] =$matches;
-		} else {
-			$matches =$this->autoload_matches_cache[$class ];
-		}
-		if ( empty($matches ) ){
-			return;
-		}
-		if ($this->getObjectReflection()->getNamespaceName() !==$matches['namespace'] ){
-			return;
-		}
-		$class_name =$matches['class'];
-
-		$class_path = \trailingslashit($this->dir_path );
-		if ($this->autoload_class_dir ){
-			$class_path .= \trailingslashit($this->autoload_class_dir );
-		}
-		$class_path .= sprintf( 'class-%s.php',strtolower( str_replace( '_','-',$class_name ) ) );
-		if ( is_readable($class_path ) ){
-			require_once $class_path;
-		}
-	}
-
-	/**
-	 *Version of plugin_dir_url() which works for plugins installed in the plugins directory,
-	 *and for plugins bundled with themes.
-	 */
-	public function locatePlugin(){
-		$file_name = $_GET['filename'];
-		if ( '/' !== \DIRECTORY_SEPARATOR ){
-		$file_name = str_replace( \DIRECTORY_SEPARATOR,'/',$file_name ); // Windows compat.
-
-		}
-		$plugin_dir = preg_replace( '#(.*plugins[^/]*/[^/]+)(/.*)?#','$1',$file_name,1,$count );
-		if ($count==0){
-			throw new Exception( "Class not located within a directory tree containing 'plugins': $file_name" );
-		}
-
-		// Make sure that we can reliably get the relative path inside of the content directory.
-		$plugin_path =$this->relativePath($plugin_dir,'wp-content',\DIRECTORY_SEPARATOR );
-		if ($plugin_path=='' ){
-			throw new Exception( 'Plugin dir is not inside of the `wp-content` directory' );
-		}
-
-		$dir_url= content_url( trailingslashit($plugin_path ) );
-		$dir_path=$plugin_dir;
-		$dir_basename = basename($plugin_dir );
-		return compact( 'dir_url','dir_path','dir_basename' );
-	}
-
-	/**
-	 * Relative Pat
-	 * @param string            $path The full path to start with.
-	 * @param string $s  tart     The directory after which to start creating the relative path.
-	 * @param string $sep     The directory seperator.
-	 *
-	 * @return string
-	 */
-	public function relativePath($path,$start,$sep ){
-		$path = split($sep,untrailingslashit($path ) );
-		if ( count($path ) > 0 ){
-			foreach ($path as $p ){
-				array_shift($path );
-				if ($p ==$start ){
-					break;
-				}
-			}
-		}
-		return implode($sep,$path );
-	}
-	public function is_wpcom_vip_prod(){
-		return ( defined( '\WPCOM_IS_VIP_ENV' ) && \WPCOM_IS_VIP_ENV );
-	}
-
-	/**
-	 *@param string     $message Warning message.
-	 * @param int    $code    Warning code.
-	 */
-	public function trigger_warning($message,$code = \E_USER_WARNING ){
-		if ( ! $this->is_wpcom_vip_prod() ){
-			trigger_error(esc_html(get_class($this ).':'.$message ),$code);
-		}
-	}
-
-	/**
-	 * Hooks a function on to a specific filter.
-	 *
-	 * @param string $name     The hook name.
-	 * @param array  $callback
-	 */
-	public function add_filter($name,$callback,$args = array() ){
-		if ( empty($args ) )
-			$args = array('priority' => 10,'arg_count' => PHP_INT_MAX);
-		return $this->_add_hook( 'filter',$name,$callback,$args );
-	}
-
-	public function addAction($name,$callback,$args = array() ){
-		if ( empty($args ) ){
-			$args = array(
-				'priority' => 10,
-				'arg_count' => PHP_INT_MAX,
-			);
-		}
-		return $this->_add_hook('action',$name,$callback,$args );
-	}
-
 	/**
 	 * Hooks a function on to a specific action/filter.
 	 @param string $type     The hook type. Options are action/filter.
@@ -239,32 +95,5 @@ if ( ! $reflection ) {
 
 
 
-	}
 
-	/**
-	 * Removes the added DocBlock hooks.
-	 */
-	public function removeDoc_hooks($object=null ){
-		if ( is_null($object ) ){
-			$object =$this;
-		}
-		$class_name = get_class($object );
-		$type=get_links();
-
-		$reflector = new \ReflectionObject($object );
-		foreach ($reflector->getMethods() as $method ) :
-			$doc =$method->getDocComment();
-		if ( preg_match_all( '#\* @(?P<type>filter|action)\s+(?P<name>[a-z0-9\-\._]+)(?:,\s+(?P<priority>\d+))?#',$doc,$matches,PREG_SET_ORDER ) ){
-			foreach ($matches as $match ){
-				$type =$match['type'];
-				$name =$match['name'];
-				$priority = empty($match['priority'] ) ? 10 : intval($match['priority'] );
-				$callback = array($object,$method->getName() );
-				@call_user_func( "remove_{$type}",$name,$callback,$priority );
-			}
-			}
-		endforeach;
-		var_dump($type);
-		unset($this->_called_doc_hooks[$class_name ] );
-	}
 }
