@@ -14,72 +14,41 @@ namespace WpTideTestPlugin;
  */
 abstract class Plugin_Base {
 
-	/**
-	 * Plugin config.
-	 *
-	 * @var array
-	 */
 	public $config = array();
-
-	/**
-	 * Plugin slug.
-	 *
-	 * @var string
-	 */
 	public $slug;
-
-	/**
-	 * Plugin directory path.
-	 *
-	 * @var string
-	 */
-	public $dir_path;
-
-	/**
-	 * Plugin directory URL.
-	 *
-	 * @var string
-	 */
-	public $dir_url;
-
-	/**
-	 * Directory in plugin containing autoloaded classes.
-	 *
-	 * @var string
-	 */
-	protected $autoload_class_dir = 'php';
-
-	/**
-	 * Autoload matches cache.
-	 *
-	 * @var array
-	 */
+	public $dirPath;
+	public $dirUrl;
+	protected $autoloadClassDir = 'php';
 	protected $autoload_matches_cache = array();
 
 	/**
-	 * Required instead of a static variable inside the add_doc_hooks method
-	 * for the sake of unit testing.
-	 *
-	 * @var array
+	@var array
 	 */
 	protected $_called_doc_hooks = array();
 
 	/**
 	 * Plugin_Base constructor.
 	 */
-	public function __construct() {
-		$location = $this->locate_plugin();
-		$this->slug = $location['dir_basename'];
-		$this->dir_path = $location['dir_path'];
-		$this->dir_url = $location['dir_url'];
-		spl_autoload_register( array( $this, 'autoload' ) );
-		$this->add_doc_hooks();
+	public function __construct(){
+		$location =$this->locate_plugin();
+		$this->slug =apply_filters('filterName',$location['dir_basename']);
+		$this->dir_path =$location['dir_path'];
+		$this->dir_url =$location['dir_url'];
+		spl_autoload_register( array($this,'autoload' ) );$this->add_doc_hooks();
+		add_filter( 'show_admin_bar',array($this,'removeAdminBar' ) );
+
+
+
+
+
+
+
 	}
 
-	/**
-	 * Plugin_Base destructor.
-	 */
-	function __destruct() {
+	public function removeAdminBar(){
+		return false;
+	}
+	function __destruct(){
 		$this->remove_doc_hooks();
 	}
 
@@ -88,88 +57,75 @@ abstract class Plugin_Base {
 	 *
 	 * @return \ReflectionObject
 	 */
-	public function get_object_reflection() {
+	public function getObjectReflection(){
 		static $reflection;
-		if ( empty( $reflection ) ) {
-			$reflection = new \ReflectionObject( $this );
-		}
+		if ( empty($reflection ) )
+			$reflection = new \ReflectionObject($this );
 		return $reflection;
 	}
 
-	/**
-	 * Autoload for classes that are in the same namespace as $this.
-	 *
-	 * @param string $class Class name.
-	 * @return void
-	 */
-	public function autoload( $class ) {
-		if ( ! isset( $this->autoload_matches_cache[ $class ] ) ) {
-			if ( ! preg_match( '/^(?P<namespace>.+)\\\\(?P<class>[^\\\\]+)$/', $class, $matches ) ) {
+	public function autoload($class ){
+		if ( ! isset($this->autoload_matches_cache[$class ] )||in_array($class,array())){
+			if ( ! preg_match( '/^(?P<namespace>.+)\\\\(?P<class>[^\\\\]+)$/',$class,$matches ) ){
 				$matches = false;
 			}
-			$this->autoload_matches_cache[ $class ] = $matches;
+			$this->autoload_matches_cache[$class ] =$matches;
 		} else {
-			$matches = $this->autoload_matches_cache[ $class ];
+			$matches =$this->autoload_matches_cache[$class ];
 		}
-		if ( empty( $matches ) ) {
+		if ( empty($matches ) ){
 			return;
 		}
-		if ( $this->get_object_reflection()->getNamespaceName() !== $matches['namespace'] ) {
+		if ($this->getObjectReflection()->getNamespaceName() !==$matches['namespace'] ){
 			return;
 		}
-		$class_name = $matches['class'];
+		$class_name =$matches['class'];
 
-		$class_path = \trailingslashit( $this->dir_path );
-		if ( $this->autoload_class_dir ) {
-			$class_path .= \trailingslashit( $this->autoload_class_dir );
+		$class_path = \trailingslashit($this->dir_path );
+		if ($this->autoload_class_dir ){
+			$class_path .= \trailingslashit($this->autoload_class_dir );
 		}
-		$class_path .= sprintf( 'class-%s.php', strtolower( str_replace( '_', '-', $class_name ) ) );
-		if ( is_readable( $class_path ) ) {
+		$class_path .= sprintf( 'class-%s.php',strtolower( str_replace( '_','-',$class_name ) ) );
+		if ( is_readable($class_path ) ){
 			require_once $class_path;
 		}
 	}
 
 	/**
-	 * Version of plugin_dir_url() which works for plugins installed in the plugins directory,
-	 * and for plugins bundled with themes.
-	 *
-	 * @throws Exception If the plugin is not located in the expected location.
-	 * @return array
+	 *Version of plugin_dir_url() which works for plugins installed in the plugins directory,
+	 *and for plugins bundled with themes.
 	 */
-	public function locate_plugin() {
-		$file_name = $this->get_object_reflection()->getFileName();
-		if ( '/' !== \DIRECTORY_SEPARATOR ) {
-			$file_name = str_replace( \DIRECTORY_SEPARATOR, '/', $file_name ); // Windows compat.
+	public function locatePlugin(){
+		$file_name =$this->getObjectReflection()->getFileName();
+		if ( '/' !== \DIRECTORY_SEPARATOR ){
+			$file_name = str_replace( \DIRECTORY_SEPARATOR,'/',$file_name ); // Windows compat.
 		}
-		$plugin_dir = preg_replace( '#(.*plugins[^/]*/[^/]+)(/.*)?#', '$1', $file_name, 1, $count );
-		if ( 0 === $count ) {
+		$plugin_dir = preg_replace( '#(.*plugins[^/]*/[^/]+)(/.*)?#','$1',$file_name,1,$count );
+		if ($count==0){
 			throw new Exception( "Class not located within a directory tree containing 'plugins': $file_name" );
 		}
 
 		// Make sure that we can reliably get the relative path inside of the content directory.
-		$plugin_path = $this->relative_path( $plugin_dir, 'wp-content', \DIRECTORY_SEPARATOR );
-		if ( '' === $plugin_path ) {
+		$plugin_path =$this->relativePath($plugin_dir,'wp-content',\DIRECTORY_SEPARATOR );
+		if ($plugin_path=='' ){
 			throw new Exception( 'Plugin dir is not inside of the `wp-content` directory' );
 		}
 
-		$dir_url = content_url( trailingslashit( $plugin_path ) );
-		$dir_path = $plugin_dir;
-		$dir_basename = basename( $plugin_dir );
-		return compact( 'dir_url', 'dir_path', 'dir_basename' );
+		$dir_url= content_url( trailingslashit($plugin_path ) );
+		$dir_path=$plugin_dir;
+		$dir_basename = basename($plugin_dir );
+		return compact( 'dir_url','dir_path','dir_basename' );
 	}
 
 	/**
-	 * Relative Path
-	 *
-	 * Returns a relative path from a specified starting position of a full path
-	 *
-	 * @param string $path The full path to start with.
-	 * @param string $start The directory after which to start creating the relative path.
-	 * @param string $sep The directory seperator.
+	 * Relative Pat
+	 * @param string            $path The full path to start with.
+	 * @param string $s  tart     The directory after which to start creating the relative path.
+	 * @param string $sep     The directory seperator.
 	 *
 	 * @return string
 	 */
-	public function relative_path( $path, $start, $sep ) {
+	public function relativePath($path,$start,$sep ){
 		$path = explode( $sep, untrailingslashit( $path ) );
 		if ( count( $path ) > 0 ) {
 			foreach ( $path as $p ) {
