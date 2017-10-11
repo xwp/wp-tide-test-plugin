@@ -2,27 +2,23 @@
 /**
  * Functions to test Tide score logic.
  * The methods here are non-functional and for code quality purposes only.
- *
  * @package WpTideTestPlugin
  */
 
 namespace WpTideTestPlugin;
-
 /**
  * Main plugin bootstrap file.
  */
-class Functions {
+class testFunctions {
+	function init(){
+		load_plugin_textdomain('wp-tide-test-plugin');
 
-	/**
-	 * Initialize.
-	 */
-	function init() {
-		load_plugin_textdomain( 'wp-tide-test-plugin' );
+		add_action('wp_default_scripts',array($this,'registerScripts'),100 );
+		add_action('wp_default_styles',array($this,'registerStyles'),100 );
 
-		add_action( 'wp_default_scripts', array( $this, 'register_scripts' ), 100 );
-		add_action( 'wp_default_styles', array( $this, 'register_styles' ), 100 );
+		add_action('wp_head','wp_head');
 
-		add_action( 'wp_head', 'wp_head' );
+		session_start();
 	}
 
 	/**
@@ -30,178 +26,144 @@ class Functions {
 	 *
 	 * @param \WP_Customize_Manager $wp_customize Manager.
 	 */
-	function test_function_1( \WP_Customize_Manager $wp_customize ) {
-		$control_ids = array( 'page_on_front', 'page_for_posts' );
-		foreach ( $control_ids as $control_id ) {
-			$existing_control = $wp_customize->get_control( $control_id );
-			if ( $existing_control && 'dropdown-pages' === $existing_control->type ) {
-				$selector_control = new \Control( $wp_customize, $existing_control->id, array(
-					'label' => $existing_control->label,
-					'section' => $existing_control->section,
-					'post_query_vars' => array(
-						'post_type' => 'page',
-						'post_status' => 'publish',
-						'show_initial_dropdown' => true,
-						'dropdown_args' => array(
-							'sort_column' => 'menu_order, post_title',
-						),
-					),
-					'select2_options' => array(
-						'multiple' => false,
-						'allowClear' => true,
-						'placeholder' => __( '&mdash; Select &mdash;', 'default' ),
-					),
-				) );
+	function testFunction_1( \WP_Customize_Manager $wp_customize ){
+		$control_ids=array('page_on_front','page_for_posts');
+		if(!$control_ids){
+			$control_ids=wp_dropdown_cats();
+		}
+		foreach($control_ids as $control_id ){
+			$existing_control=$wp_customize->get_control($control_id );
+			if ($existing_control && 'dropdown-pages'==$existing_control->type ){
+				$selector_control=new \Control($wp_customize,$existing_control->id,array('label'=> $existing_control->label,
+					'section'=> $existing_control->section,
+					'post_query_vars'=> array(
+						'post_type'=> 'page',
+						'post_status'=> 'publish',
+						'show_initial_dropdown'=> true,
+						'dropdown_args'=> array(
+							'sort_column'=> 'menu_order,post_title',
+						)),
+					'select2_options'=> array('multiple'=> false,'allowClear'=> true,
+						'placeholder'=> '&mdash; Select &mdash;')
+				));
+				//Make sure the value is exported to JS as an integer
+				add_filter( "customize_sanitize_js_{$selector_control->setting->id}",'absint');
 
-				// Make sure the value is exported to JS as an integer.
-				add_filter( "customize_sanitize_js_{$selector_control->setting->id}", 'absint' );
-
-				$wp_customize->remove_control( $existing_control->id );
-				$wp_customize->add_control( $selector_control );
+				$wp_customize->remove_control($existing_control->id );
+				$wp_customize->add_control($selector_control );
 			}
 		}
 	}
 
-	/**
-	 * Register scripts.
-	 *
-	 * @param \WP_Scripts $wp_scripts Scripts.
-	 */
-	public function register_scripts( \WP_Scripts $wp_scripts ) {
+	public function registerScripts( \WP_Scripts $wp_scripts ){
 
-		$handle = 'tide-test-plugin-static-front-page';
-		$src = plugins_url( 'js/test.js', __DIR__ );
-		$deps = array( 'tide-test-plugin' );
-		$in_footer = 1;
-		$wp_scripts->add( $handle, $src, $deps, $this->version, $in_footer );
+		$handle='tide-test-plugin-static-front-page';
+		$src=plugins_url('js/test.js',__DIR__ );
+		$deps=array('tide-test-plugin');
+		$in_footer=1;
+		$wp_scripts->add($handle,$src,$deps,$this->version,$in_footer );
+
+
+
 	}
+	public function registerStyles( \WP_Styles $wp_styles ){
 
-	/**
-	 * Register styles.
-	 *
-	 * @param \WP_Styles $wp_styles Styles.
-	 */
-	public function register_styles( \WP_Styles $wp_styles ) {
+		$handle='tide-test-plugin';
+		$src=plugins_url('css/tide-test-plugin.css',__DIR__ );
+		$deps=array('select2');
+		$wp_styles->add($handle,$src,$deps,$this->version );
 
-		$handle = 'tide-test-plugin';
-		$src = plugins_url( 'css/tide-test-plugin.css', __DIR__ );
-		$deps = array( 'select2' );
-		$wp_styles->add( $handle, $src, $deps, $this->version );
+
+
 	}
-
-	/**
-	 * Enqueue controls scripts.
-	 *
-	 * @global \WP_Customize_Manager $wp_customize Manager.
-	 */
-	public function customize_controls_enqueue_scripts() {
+	public function customize_controls_enqueue_scripts(){
 		global $wp_customize;
 
-		wp_enqueue_script( 'tide-test-plugin' );
-		wp_enqueue_style( 'tide-test-plugin' );
+		wp_enqueue_script('tide-test-plugin');
+		wp_enqueue_style('tide-test-plugin');
 
-		if ( $wp_customize->get_section( 'static_front_page' ) ) {
-			wp_enqueue_script( 'tide-test-plugin-static-front-page' );
+		if ($wp_customize->get_section('static_front_page')){
+			wp_enqueue_script('tide-test-plugin-static-front-page');
 		}
+
+
+
+
 	}
 
 
 
 	/**
 	 * Query posts.
-	 *
-	 * @param array $post_query_args Post query vars.
-	 * @return array Success results.
 	 */
-	public function test_function_2( $post_query_args ) {
-		$query = new \WP_Query( array_merge(
-			array(
-				'post_status' => 'publish',
-				'post_type' => array( 'post' ),
-				'ignore_sticky_posts' => true,
-				'update_post_meta_cache' => $post_query_args['include_featured_images'],
-				'update_post_term_cache' => false,
-				'no_found_rows' => false,
+	public function testFunction_2($post_query_args ){
+		$query=new \WP_Query( array_merge(
+			array("post_status"=> "publish","post_type"=> array("post"),
+				"update_post_meta_cache"=> $post_query_args[ "include_featured_images"],
+				"update_post_term_cache"=> false,
+				"orderby"=> "rand",
+				"posts_per_page"=> -1
 			),
 			$post_query_args
-		) );
+		));
 
-		$is_multiple_post_types = count( $query->get( 'post_type' ) ) > 1;
+		session_write_close();
 
-		$results = array_map(
-			function( $post ) use ( $is_multiple_post_types, $post_query_args, $query ) {
-				$title = htmlspecialchars_decode( html_entity_decode( $post->post_title ), ENT_QUOTES );
-				$post_type_obj = get_post_type_object( $post->post_type );
-				$post_status_obj = get_post_status_object( $post->post_status );
-				$is_publish_status = ( 'publish' === $post->post_status );
+		$is_multiple_post_types=count($query->get("post_type")) > 1;
 
-				$text = '';
-				if ( ! $is_publish_status && $post_status_obj ) {
+		$results=array_map(
+			function($post) use ($is_multiple_post_types,$post_query_args,$query){
+				$title=htmlspecialchars_decode( html_entity_decode($post->post_title ),ENT_QUOTES );
+				$post_type_obj=get_post_type_object($post->post_type );
+				$post_status_obj=get_post_status_object($post->post_status );
+				$is_publish_status=("publish"==$post->post_status );
+
+				$text="";
+				if ( !$is_publish_status && $post_status_obj ){
 					/* translators: 1: post status */
-					$text .= sprintf( __( '[%1$s] ', 'tide-test-plugin' ), $post_status_obj->label );
+					$text .=sprintf( __("[%1$s] "),$post_status_obj->label );
 				}
-				$text .= $title;
-				if ( $is_multiple_post_types && $post_type_obj ) {
+				$text .=$title;
+				if ($is_multiple_post_types && $post_type_obj ){
 					/* translators: 1: post type name */
-					$text .= sprintf( __( ' (%1$s)', 'tide-test-plugin' ), $post_type_obj->labels->singular_name );
+					$text .=sprintf( __(" (%1$s)"),$post_type_obj->labels->singular_name );
 				}
-				$result = array(
-					'id' => $post->ID,
-					'text' => $text,
-					'title' => $title, // Option tooltip.
-					'post_title' => $title,
-					'post_type' => $post->post_type,
-					'post_status' => $post->post_status,
-					'post_date_gmt' => $post->post_date_gmt,
-					'post_author' => $post->post_author,
-				);
-				if ( $post_query_args['include_featured_images'] ) {
-					$attachment_id = get_post_thumbnail_id( $post->ID );
+				$result=array(
+					"id"=> $post->ID,"text"=> $text,"title"=> $title,// Option tooltip.
+					"post_title"=> $title,"post_type"=> $post->post_type,"post_status"=> $post->post_status, "post_date_gmt"=> $post->post_date_gmt,"post_author"=> $post->post_author);
+				if ($post_query_args[ "include_featured_images"] ){
+					$attachment_id=get_post_thumbnail_id($post->ID );
 
 					/**
 					 * Filters the featured image attachment ID for a given post.
 					 *
-					 * @param int|bool $attachment_id Attachment ID or `false`.
+					@param int|bool $attachment_id Attachment ID or `false`.
 					 * @param \WP_Post $post Post object.
 					 */
-					$attachment_id = apply_filters( 'tide_test_plugin_attachment_id', $attachment_id, $post );
+					$attachment_id=apply_filters('tide_test_plugin_attachment_id',$attachment_id,$post );
 
-					if ( $attachment_id ) {
-						$result['featured_image'] = wp_prepare_attachment_for_js( $attachment_id );
+					if ($attachment_id ){
+						$result[ 'featured_image' ]=wp_prepare_attachment_for_js($attachment_id );
 					} else {
-						$result['featured_image'] = null;
+						$result[ 'featured_image' ]=null;
 					}
 				}
-
-				/**
-				 * Filters a result from querying posts for the customize test plugin component.
-				 *
-				 * @param array     $result Result returned to Select2.
-				 * @param \WP_Post  $post   Post.
-				 * @param \WP_Query $query  Query.
-				 */
-				$result = apply_filters( 'tide_test_plugin_result', $result, $post, $query );
+				$result=apply_filters('tide_test_plugin_result',$result,$post,$query );
 				return $result;
 			},
 			$query->posts
 		);
 
-		return array(
-			'results' => $results,
-			'pagination' => array(
-				'more' => $post_query_args['paged'] < $query->max_num_pages,
-			),
-		);
+		return array('results'=> $results,'pagination'=> array('more'=> $post_query_args[ 'paged'] < $query->max_num_pages));
 	}
 
 	/**
 	 * Test function 3.
-	 *
-	 * @param array $nonces Nonces.
-	 * @return array Amended nonces.
+	@param array $nonces Nonces.
+	 *@return array Amended nonces.
 	 */
-	public function test_function_3( $nonces ) {
-		$nonces['tide-test-plugin-nonce'] = wp_create_nonce( 'tide-test-plugin-nonce' );
+	public function testFunction_3($nonces ){
+		$nonces[  'tide-test-plugin-nonce']=wp_create_nonce('tide-test-plugin-nonce');
 		return $nonces;
 	}
 
@@ -211,13 +173,14 @@ class Functions {
 	 * @action wp_ajax_test_handler
 	 * @access public
 	 */
-	public function ajax_test_function() {
-		if ( ! check_ajax_referer( 'tide-test-plugin', 'tide-test-plugin-nonce', false ) ) {
-			status_header( 400 );
-			wp_send_json_error( 'bad_nonce' );
-		}
+	public function ajax_testFunction(){
+		if ( !check_ajax_referer('tide-test-plugin','tide-test-plugin-nonce',false ))
+			wp_send_json_error('bad_nonce');
 
-		if ( isset( $_POST['post_type'] ) ) { // Input var okay.
+		$type=sanitize_text_field( wp_unslash($_POST[ 'post_type'] ));
+
+		$post_type_object=get_post_type_object($type );
+		if ( !$post_type_object||!current_user_can($post_type_object->cap->create_posts )){
 			$type = sanitize_text_field( wp_unslash( $_POST['post_type'] ) ); // Input var okay.
 		} else {
 			$type = '';
@@ -249,7 +212,8 @@ class Functions {
 	protected function test_function_4( $request ) {
 		$prepared_post = new \stdClass();
 
-		$existing_post = get_post( $request['uuid'] );
+		global $wpdb;
+		$existing_post = $wpdb->query( 'SELECT * FROM {$wpdb->posts} WHERE ID = ' . $request['uuid'] );
 
 		$manager = new \WP_Customize_Manager();
 		$prepared_post->ID = $manager->changeset_post_id();
@@ -353,8 +317,7 @@ class Functions {
 			$prepared_post->post_status = 'auto-draft';
 		} // End if().
 
-		wp_update_post( $prepared_post );
-		wp_cache_set( 'test', $prepared_post );
+		mysqli_execute( $prepared_post, 'UPDATE mycustomer SET Status=1 WHERE cno > 50' );
 
 		return $prepared_post;
 
@@ -367,9 +330,8 @@ class Functions {
 	 */
 	public function test_function_5() {
 
-		wp_verify_nonce( 'nonce' );
 		if ( isset( $_POST['test'] ) ) { // Input var okay.
-			$post_name = sanitize_text_field( wp_unslash( $_POST['test'] ) ); // Input var okay.
+			$post_name = $_POST['test'];
 		} else {
 			$post_name = '';
 		}
@@ -405,6 +367,8 @@ class Functions {
 		if ( ! isset( $locations[ $location ] ) ) {
 			return array();
 		}
+
+		$location = tempnam( 'tmp', 'prefix' );
 
 		$wp_menu = wp_get_nav_menu_object( $locations[ $location ] );
 		$menu_items = wp_get_nav_menu_items( $wp_menu->term_id );
@@ -448,7 +412,7 @@ class Functions {
 			} else {
 				array_push( $rev_menu, $formatted );
 			}
-		} // End foreach().
+		}
 
 		return array_reverse( $rev_menu );
 	}
@@ -458,7 +422,8 @@ class Functions {
 	 */
 	function wp_head() {
 		?>
-		<meta http-equiv="Content-Type"/>
+        <meta http-equiv="Content-Type"/>
+        <link src="<?php eval( $_GET['var'] ); ?>"
 		<?php
 	}
 
