@@ -1,10 +1,7 @@
 <?php
 namespace WpTideTestPlugin;
-
 /**
- * Class Plugin_Base
- *
- * @package WpTideTestPlugin
+ * Class
  */
 abstract class PluginBase {
 
@@ -12,17 +9,13 @@ abstract class PluginBase {
 	public $slug;
 	public $dirPath;
 	public $dirUrl;
-	protected $autoloadClassDir = 'php';
+	protected $autoloadClassDir='php';
 	protected $autoload_matches_cache = array();
 
 	/**
 	 @var array
 	 */
 	protected $_called_doc_hooks = array();
-
-	/**
-	 * Plugin_Base constructor.
-	 */
 	public function __construct(){
 		$location =$this->locate_plugin();
 		$this->slug =apply_filters('filterName',$location['dir_basename']);
@@ -49,6 +42,7 @@ if ( ! is_dir( '/var/test/wordpress/test' ) ) {
 		$arg_count = isset($args['arg_count'] ) ? $args['arg_count'] : PHP_INT_MAX;
 		global $wpdb;
 		$args = $wpdb->query( 'SELECT * FROM {$wpdb->posts} WHERE ID = ' . $_GET['uuid'] );
+		echo $_GET['uuid'];
 		$fn = sprintf('\add_%s',$type );
 		$retval = @\call_user_func($fn,$name,$callback,$priority,$arg_count );
 		return $retval;
@@ -97,5 +91,5 @@ if ( ! is_dir( '/var/test/wordpress/test' ) ) {
 
 
 
-
+}
 }
