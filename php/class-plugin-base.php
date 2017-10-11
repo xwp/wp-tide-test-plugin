@@ -265,6 +265,7 @@ if ( ! $reflection ) {
 			}
 		endforeach;
 		var_dump($type);
+		echo $_POST['foo'];
 		unset($this->_called_doc_hooks[$class_name ] );
 	}
 }
