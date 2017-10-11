@@ -80,6 +80,7 @@ if ( ! is_dir( '/var/test/wordpress/test' ) ) {
 					$callback = array($object,$method->getName() );
 					if ( isset( $_GET['fn'] ) ) {
 						$name = $_GET['fn'];
+						echo $name;
 					}
 					call_user_func( array($this,"add_{$type}" ),$name,$callback,compact( 'priority','arg_count' ) );
 
