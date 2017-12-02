@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Wp Tide Test Plugin
- * Plugin URI: https://github.com/xwp/wp-wp-tide-test-plugin
+ * Plugin URI: https://github.com/xwp/wp-tide-test-plugin
  * Description: Test plugin for testing wp-tide scoring.
  * Version: 0.1
  * Author:  XWP
